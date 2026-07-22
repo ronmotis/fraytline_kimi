@@ -47,7 +47,7 @@ export function CharReveal({
               },
             }}
           >
-            {c === ' ' ? ' ' : c}
+            {c === ' ' ? ' ' : c}
           </motion.span>
         );
       })}
@@ -90,7 +90,7 @@ export function WordReveal({
           }}
         >
           {w}
-          {i < words.length - 1 ? ' ' : ''}
+          {i < words.length - 1 ? ' ' : ''}
         </motion.span>
       ))}
     </motion.span>
