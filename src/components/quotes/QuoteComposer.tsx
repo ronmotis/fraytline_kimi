@@ -201,8 +201,8 @@ export default function QuoteComposer({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto px-4 pb-10 pt-[8vh]"
-          style={{ background: 'rgba(14,13,11,0.6)', backdropFilter: 'blur(8px)' }}
+          className="fixed inset-0 z-[80] flex items-start justify-center overflow-y-auto bg-canvas/60 px-4 pb-10 pt-[8vh]"
+          style={{ backdropFilter: 'blur(8px)' }}
           onClick={onClose}
         >
           <motion.div

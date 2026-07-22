@@ -6,6 +6,7 @@ import type { Doc, Milestone, Movement } from '@/store';
 import StatusPill from '@/components/StatusPill';
 import DocChip from '@/components/DocChip';
 import Materialize, { MatItem } from '@/components/quotes/Materialize';
+import { cssVar, trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -15,6 +16,7 @@ const nowStamp = () =>
 
 /** Press-and-hold 600ms confirm — progress ring fills, scale pulse, then stamps. */
 function HoldButton({ label, onComplete }: { label: string; onComplete: () => void }) {
+  useTheme(); // re-render ring ink on theme flip
   const progress = useMotionValue(0);
   const controlsRef = useRef<ReturnType<typeof animate> | null>(null);
   const [holding, setHolding] = useState(false);
@@ -44,9 +46,9 @@ function HoldButton({ label, onComplete }: { label: string; onComplete: () => vo
       className="relative flex min-h-[52px] w-full touch-none select-none items-center justify-center gap-2.5 overflow-hidden rounded-card bg-ember px-4 text-body-strong text-canvas"
     >
       <svg width="22" height="22" viewBox="0 0 22 22" className="-rotate-90">
-        <circle cx="11" cy="11" r="9" fill="none" stroke="rgba(14,13,11,0.3)" strokeWidth="2.5" />
+        <circle cx="11" cy="11" r="9" fill="none" stroke={trgb('--canvas-rgb', 0.3)} strokeWidth="2.5" />
         <motion.circle
-          cx="11" cy="11" r="9" fill="none" stroke="#0E0D0B" strokeWidth="2.5" strokeLinecap="round"
+          cx="11" cy="11" r="9" fill="none" stroke={cssVar('--canvas')} strokeWidth="2.5" strokeLinecap="round"
           pathLength={100} strokeDasharray="100 100" style={{ strokeDashoffset: dash }}
         />
       </svg>
@@ -60,16 +62,17 @@ function HoldButton({ label, onComplete }: { label: string; onComplete: () => vo
 function SignaturePad({ onInk }: { onInk: (has: boolean) => void }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
+  const theme = useTheme();
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.strokeStyle = '#F2EDE3';
+    ctx.strokeStyle = cssVar('--text-1');
     ctx.lineWidth = 2;
     ctx.lineCap = 'round';
-  }, []);
+  }, [theme]);
 
   const pos = (e: React.PointerEvent) => {
     const r = ref.current!.getBoundingClientRect();

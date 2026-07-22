@@ -5,6 +5,7 @@ import { useStore } from '@/store';
 import type { Movement } from '@/store';
 import { TODAY_IDX, WEEK_DAYS, barsForVehicle, utilization } from './dispatchUtils';
 import type { GanttBar } from './dispatchUtils';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -28,6 +29,7 @@ const TONE_CLS: Record<GanttBar['tone'], string> = {
  * Right-edge drag proposes a reschedule (governed, snaps to day).
  */
 export default function FleetTimeline({ proposed }: { proposed?: { movement: Movement; vehicleId: string } }) {
+  useTheme(); // refresh service-stripe tint on theme flip
   const fleet = useStore((s) => s.fleet.filter((v) => v.tenantId === s.activeTenantId));
   const movements = useStore((s) => s.movements.filter((m) => m.tenantId === s.activeTenantId));
   const pushToast = useStore((s) => s.pushToast);
@@ -125,7 +127,7 @@ export default function FleetTimeline({ proposed }: { proposed?: { movement: Mov
                     originX: 0,
                     left: `${(bar.startIdx / 7) * 100}%`,
                     width: `${((bar.endIdx - bar.startIdx + 1) / 7) * 100}%`,
-                    backgroundImage: bar.tone === 'service' ? 'repeating-linear-gradient(45deg, rgba(240,180,41,0.12) 0 4px, transparent 4px 8px)' : undefined,
+                    backgroundImage: bar.tone === 'service' ? `repeating-linear-gradient(45deg, ${trgb('--warn-rgb', 0.12)} 0 4px, transparent 4px 8px)` : undefined,
                   }}
                   className={cn(
                     'group absolute top-[5px] flex h-5 items-center overflow-visible rounded border px-1.5 font-mono text-[9px]',

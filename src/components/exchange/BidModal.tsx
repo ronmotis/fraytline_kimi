@@ -71,7 +71,7 @@ export default function BidModal({ load, onClose }: { load: ExchangeLoad; onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         onClick={onClose}
-        className="absolute inset-0 bg-[rgba(14,13,11,0.6)] backdrop-blur-[8px]"
+        className="absolute inset-0 bg-canvas/60 backdrop-blur-[8px]"
       />
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: -8 }}

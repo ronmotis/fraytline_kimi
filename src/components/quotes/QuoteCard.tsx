@@ -5,6 +5,7 @@ import { fmtMoney } from '@/store';
 import type { Quote } from '@/store';
 import MemoryChip from '@/components/MemoryChip';
 import ConfidenceRing from '@/components/ConfidenceRing';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 import type { QuoteOverride } from './quoteUtils';
 
@@ -30,6 +31,7 @@ export default function QuoteCard({
   onDrag?: (point: { x: number; y: number }) => void;
   onDragEnd?: (point: { x: number; y: number }) => void;
 }) {
+  useTheme(); // refresh drag glow color on theme flip
   const navigate = useNavigate();
   const col = override?.col;
   const marginTone = quote.marginPct >= 12 ? 'text-ok' : 'text-danger';
@@ -43,7 +45,7 @@ export default function QuoteCard({
       drag={draggable}
       dragSnapToOrigin
       dragElastic={0.12}
-      whileDrag={draggable ? { scale: 1.03, boxShadow: '0 0 24px rgba(232,145,45,0.25)', zIndex: 60 } : undefined}
+      whileDrag={draggable ? { scale: 1.03, boxShadow: `0 0 24px ${trgb('--ember-rgb', 0.25)}`, zIndex: 60 } : undefined}
       onDragStart={onDragStart}
       onDrag={(_, info) => onDrag?.(info.point)}
       onDragEnd={(_, info) => onDragEnd?.(info.point)}

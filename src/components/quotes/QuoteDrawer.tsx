@@ -89,8 +89,7 @@ export default function QuoteDrawer({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[75]"
-            style={{ background: 'rgba(14,13,11,0.5)' }}
+            className="fixed inset-0 z-[75] bg-canvas/50"
             onClick={onClose}
           />
           <motion.aside

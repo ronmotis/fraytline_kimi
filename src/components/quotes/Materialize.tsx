@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -23,6 +24,7 @@ export default function Materialize({
   borderClassName?: string;
   delay?: number;
 }) {
+  useTheme(); // refresh shimmer tint on theme flip
   return (
     <motion.div
       initial="hidden"
@@ -40,8 +42,7 @@ export default function Materialize({
         aria-hidden
         className="pointer-events-none absolute inset-0 z-10"
         style={{
-          background:
-            'linear-gradient(100deg, transparent 20%, rgba(47,211,190,0.22) 50%, transparent 80%)',
+          background: `linear-gradient(100deg, transparent 20%, ${trgb('--teal-rgb', 0.22)} 50%, transparent 80%)`,
         }}
         initial={{ x: '-100%' }}
         animate={{ x: '100%' }}

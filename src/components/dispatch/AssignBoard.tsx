@@ -8,6 +8,7 @@ import DocChip from '@/components/DocChip';
 import Materialize, { MatItem } from '@/components/quotes/Materialize';
 import { checkCompatibility, isUnassigned } from './dispatchUtils';
 import type { Verdict } from './dispatchUtils';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -33,6 +34,7 @@ export default function AssignBoard({
   canDrag: boolean;
   onOpenManifest: () => void;
 }) {
+  useTheme(); // refresh drag glow color on theme flip
   const fleet = useStore((s) => s.fleet.filter((v) => v.tenantId === s.activeTenantId));
   const drivers = useStore((s) => s.drivers.filter((d) => d.tenantId === s.activeTenantId));
   const tenantId = useStore((s) => s.activeTenantId);
@@ -122,7 +124,7 @@ export default function AssignBoard({
               drag={canDrag}
               dragSnapToOrigin
               dragElastic={0.12}
-              whileDrag={canDrag ? { scale: 1.04, boxShadow: '0 0 24px rgba(232,145,45,0.25)', zIndex: 60 } : undefined}
+              whileDrag={canDrag ? { scale: 1.04, boxShadow: `0 0 24px ${trgb('--ember-rgb', 0.25)}`, zIndex: 60 } : undefined}
               onDragStart={() => setDragId(m.id)}
               onDrag={(_, info) => setHoverTruck(hitTest(info.point))}
               onDragEnd={(_, info) => {
