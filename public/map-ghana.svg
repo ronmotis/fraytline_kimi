@@ -1,0 +1,30 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stylized dark cartography: Ghana + sliver of Burkina Faso (schematic) -->
+  <rect width="1200" height="900" fill="#0E0D0B"/>
+
+  <!-- Gulf of Guinea -->
+  <path d="M0 760 C 200 730, 420 745, 640 735 C 850 726, 1050 745, 1200 720 V900 H0 Z" fill="#12100C"/>
+  <path d="M0 760 C 200 730, 420 745, 640 735 C 850 726, 1050 745, 1200 720" stroke="rgba(235,225,205,0.16)" stroke-width="1" fill="none"/>
+
+  <!-- Burkina Faso sliver -->
+  <path d="M240 0 H 760 C 780 60, 740 120, 700 170 C 640 220, 560 240, 470 235 C 390 230, 310 200, 275 140 C 250 95, 245 45, 240 0 Z" fill="#191712" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+
+  <!-- Ghana landmass -->
+  <path d="M470 235 C 560 240, 640 220, 700 170 C 730 250, 720 340, 700 430 C 680 520, 690 620, 660 720 C 560 738, 430 740, 320 735 C 280 640, 270 540, 285 440 C 300 340, 330 270, 360 236 C 400 230, 440 233, 470 235 Z" fill="#1D1A14" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+
+  <!-- Lake Volta hint -->
+  <path d="M560 320 C 580 380, 575 460, 555 530 C 545 480, 540 400, 548 330 Z" fill="#12100C" stroke="rgba(235,225,205,0.10)" stroke-width="1"/>
+
+  <!-- City dots + labels -->
+  <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#A89F8E" letter-spacing="1.5">
+    <circle cx="560" cy="700" r="3" fill="#F2EDE3"/><text x="572" y="705">TEMA</text>
+    <circle cx="505" cy="695" r="3" fill="#F2EDE3"/><text x="455" y="718">ACCRA</text>
+    <circle cx="430" cy="480" r="3" fill="#F2EDE3"/><text x="442" y="472">KUMASI</text>
+    <circle cx="335" cy="705" r="3" fill="#F2EDE3"/><text x="347" y="710">TAKORADI</text>
+    <circle cx="490" cy="130" r="3" fill="#F2EDE3"/><text x="502" y="135">OUAGADOUGOU</text>
+  </g>
+
+  <!-- Border-crossing diamond: Paga -->
+  <path d="M508 228 L516 236 L508 244 L500 236 Z" stroke="rgba(235,225,205,0.5)" stroke-width="1.2" fill="#1D1A14"/>
+  <text x="524" y="241" font-family="'JetBrains Mono', monospace" font-size="10" fill="#6E675A" letter-spacing="1">PAGA</text>
+</svg>

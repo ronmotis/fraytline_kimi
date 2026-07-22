@@ -1,0 +1,11 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Meridian Freight: circle with three converging route lines -->
+  <circle cx="32" cy="32" r="26" stroke="#A89F8E" stroke-width="2"/>
+  <path d="M12 44 C 22 40, 28 36, 32 32" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 6 C 32 18, 32 26, 32 32" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+  <path d="M52 44 C 42 40, 36 36, 32 32" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="32" cy="32" r="3" fill="#A89F8E"/>
+  <circle cx="12" cy="44" r="2" fill="#A89F8E"/>
+  <circle cx="32" cy="6" r="2" fill="#A89F8E"/>
+  <circle cx="52" cy="44" r="2" fill="#A89F8E"/>
+</svg>

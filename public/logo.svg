@@ -1,0 +1,7 @@
+<svg width="160" height="32" viewBox="0 0 160 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- beacon mark: route line bending 45deg upward with ember node -->
+  <path d="M3 23 H15 L23 15" stroke="#E8912D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="15" cy="23" r="2.6" fill="#E8912D"/>
+  <circle cx="23" cy="15" r="1.4" fill="#E8912D" opacity="0.55"/>
+  <text x="30" y="24" font-family="'Space Grotesk', sans-serif" font-weight="600" font-size="17" letter-spacing="-0.34" fill="#E8912D">fraytline</text>
+</svg>

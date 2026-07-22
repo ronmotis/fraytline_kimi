@@ -1,0 +1,51 @@
+<svg width="1200" height="900" viewBox="0 0 1200 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stylized dark cartography: East Africa corridor (schematic, not exact) -->
+  <rect width="1200" height="900" fill="#0E0D0B"/>
+
+  <!-- Indian Ocean -->
+  <path d="M1200 0 V900 H760 C830 800 900 720 940 620 C980 520 960 430 1000 330 C1040 230 1120 120 1200 60 Z" fill="#12100C"/>
+  <path d="M760 900 C830 800 900 720 940 620 C980 520 960 430 1000 330 C1040 230 1120 120 1200 60" stroke="rgba(235,225,205,0.16)" stroke-width="1" fill="none"/>
+
+  <!-- Landmass: unified bloc -->
+  <path d="M120 60 H980 C1010 140 960 240 930 330 C900 420 920 520 870 610 C820 700 760 800 720 900 H120 C100 780 130 660 110 540 C90 420 120 300 105 200 Z" fill="#1D1A14" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+
+  <!-- Country hairline borders (schematic) -->
+  <!-- South Sudan / Uganda -->
+  <path d="M260 290 C 360 268, 470 262, 560 285" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Uganda / Kenya -->
+  <path d="M585 285 C 578 340, 582 400, 575 470 C 570 520, 578 560, 575 600" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Kenya / Tanzania -->
+  <path d="M575 600 C 660 590, 760 610, 850 590" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Uganda / Rwanda -->
+  <path d="M380 455 C 420 445, 480 450, 540 445" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Rwanda west/south edge -->
+  <path d="M380 455 C 372 500, 380 540, 395 575 C 430 585, 470 580, 505 572" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Uganda west edge (DRC) -->
+  <path d="M380 455 C 360 400, 350 340, 360 290" stroke="rgba(235,225,205,0.16)" stroke-width="1"/>
+  <!-- Lake Victoria hint -->
+  <path d="M505 470 C 530 460, 560 465, 570 485 C 560 510, 525 515, 505 500 Z" fill="#12100C" stroke="rgba(235,225,205,0.10)" stroke-width="1"/>
+
+  <!-- City dots + labels -->
+  <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#A89F8E" letter-spacing="1.5">
+    <circle cx="850" cy="540" r="3" fill="#F2EDE3"/><text x="862" y="545">MOMBASA</text>
+    <circle cx="650" cy="430" r="3" fill="#F2EDE3"/><text x="662" y="435">NAIROBI</text>
+    <circle cx="500" cy="410" r="3" fill="#F2EDE3"/><text x="440" y="395">KAMPALA</text>
+    <circle cx="415" cy="520" r="3" fill="#F2EDE3"/><text x="350" y="545">KIGALI</text>
+    <circle cx="420" cy="150" r="3" fill="#F2EDE3"/><text x="432" y="155">JUBA</text>
+    <circle cx="790" cy="700" r="3" fill="#F2EDE3"/><text x="802" y="705">DAR ES SALAAM</text>
+  </g>
+
+  <!-- Border-crossing diamonds -->
+  <g stroke="rgba(235,225,205,0.5)" stroke-width="1.2" fill="#1D1A14">
+    <path d="M575 377 L583 385 L575 393 L567 385 Z"/>
+    <path d="M578 427 L586 435 L578 443 L570 435 Z"/>
+    <path d="M445 457 L453 465 L445 473 L437 465 Z"/>
+    <path d="M445 242 L453 250 L445 258 L437 250 Z"/>
+  </g>
+  <g font-family="'JetBrains Mono', monospace" font-size="10" fill="#6E675A" letter-spacing="1">
+    <text x="592" y="382">MALABA</text>
+    <text x="594" y="440">BUSIA</text>
+    <text x="410" y="450">GATUNA</text>
+    <text x="461" y="247">NIMULE</text>
+  </g>
+</svg>

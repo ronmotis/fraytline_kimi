@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Savannah Haulage: rounded square, acacia-horizon line, dot sun -->
+  <rect x="7" y="7" width="50" height="50" rx="12" stroke="#A89F8E" stroke-width="2"/>
+  <circle cx="40" cy="24" r="4" fill="#A89F8E"/>
+  <!-- acacia canopy -->
+  <path d="M18 34 C 22 28, 30 27, 34 30 C 38 27, 45 29, 47 34" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 33 V 44" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+  <!-- horizon -->
+  <path d="M14 46 H 50" stroke="#A89F8E" stroke-width="2" stroke-linecap="round"/>
+</svg>
