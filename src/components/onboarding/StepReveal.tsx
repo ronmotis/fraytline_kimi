@@ -264,7 +264,7 @@ export default function StepReveal({
                     height="100%"
                     rx="10"
                     fill="none"
-                    stroke="rgba(235,225,205,0.22)"
+                    stroke="var(--line-strong)"
                     strokeWidth="1"
                     pathLength={100}
                     strokeDasharray={100}
@@ -371,7 +371,7 @@ export default function StepReveal({
           <div ref={headlineRef} className="font-display text-display text-text-1">
             {HEADLINE.split('').map((ch, i) => (
               <span key={i} className="reveal-char inline-block">
-                {ch === ' ' ? ' ' : ch}
+                {ch === ' ' ? ' ' : ch}
               </span>
             ))}
           </div>

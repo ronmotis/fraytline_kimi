@@ -200,8 +200,7 @@ export default function Quotes() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[85] flex items-center justify-center"
-            style={{ background: 'rgba(14,13,11,0.6)' }}
+            className="fixed inset-0 z-[85] flex items-center justify-center bg-canvas/60"
             onClick={() => setLostPrompt(null)}
           >
             <motion.div

@@ -183,7 +183,7 @@ export default function CommandBar() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <div className="absolute inset-0 bg-[rgba(14,13,11,0.6)] backdrop-blur-[8px]" onClick={close} />
+          <div className="absolute inset-0 bg-canvas/60 backdrop-blur-[8px]" onClick={close} />
           <motion.div
             className="glass absolute left-1/2 top-[18vh] w-[640px] max-w-[92vw] -translate-x-1/2 overflow-hidden rounded-modal border border-line-strong shadow-modal"
             initial={{ scale: 0.96, y: -8, opacity: 0 }}

@@ -17,9 +17,17 @@ const MAX_CHARGED_EXTRA = 20; // +30 charged at full energy (30 base)
 const CAM_Z = 60;
 const FOV = 50;
 
-const AMBIENT = new THREE.Color('#8d8474');
-const TEAL = new THREE.Color('#2FD3BE');
-const EMBER = new THREE.Color('#E8912D');
+// Scene palette follows the active UI theme (read once at module init —
+// onboarding mounts before any in-app theme flip is possible).
+const cssColor = (name: string, fallback: string): string =>
+  (typeof document !== 'undefined' &&
+    getComputedStyle(document.documentElement).getPropertyValue(name).trim()) ||
+  fallback;
+
+const AMBIENT = new THREE.Color(cssColor('--text-3', '#8d8474'));
+const TEAL = new THREE.Color(cssColor('--teal', '#2FD3BE'));
+const EMBER = new THREE.Color(cssColor('--ember', '#E8912D'));
+const LINE = cssColor('--text-2', '#A89F8E');
 
 // entity-cluster targets (loose ring, normalized) — Model Reveal convergence
 const CLUSTERS: [number, number][] = [
@@ -242,7 +250,7 @@ function Field({ control }: { control: RefObject<SignalControl> }) {
       <lineSegments geometry={data.lineGeo} frustumCulled={false}>
         <lineBasicMaterial
           ref={linesMat}
-          color="#A89F8E"
+          color={LINE}
           transparent
           opacity={0.16}
           blending={THREE.AdditiveBlending}
