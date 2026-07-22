@@ -53,58 +53,105 @@ export default function ApprovalQueue() {
           <button
             onClick={() => setBatchOpen(true)}
             style={tintStyle('ember')}
-            className="flex items-center gap-1.5 rounded-chip border px-3 py-1.5 text-caption font-medium text-ember transition-colors hover:brightness-110"
+            className="flex items-center gap-1.5 rounded-chip border px-3 py-1.5 text-caption font-medium text-ember transition-opacity hover:opacity-80"
           >
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Approve {batchable.length} inside guardrails
+            <ShieldCheck className="h-3.5 w-3.5" /> Approve all inside guardrails ({batchable.length})
           </button>
         )}
       </div>
 
-      {pending.length === 0 ? (
-        <EmptyState
-          icon={CircleCheck}
-          title="Queue is clear"
-          body="Anything the Conductor wants to do beyond your guardrails will land here first — with its reasoning attached."
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-          {pending.map((a) => (
-            <QueueCard key={a.id} action={a} canAct={roleCanAct(role, a)} role={role} />
-          ))}
-        </div>
-      )}
+      <div className="flex-1">
+        {pending.length === 0 ? (
+          <EmptyState
+            icon={CircleCheck}
+            title="Nothing waiting"
+            body="When I need your decision — a regulated document, a bid outside routine — it lands here with the full reasoning attached."
+          />
+        ) : (
+          <AnimatePresence initial={false}>
+            {pending.map((a, i) => {
+              const canAct = roleCanAct(role, a);
+              return (
+                <QueueCard
+                  key={a.id}
+                  action={a}
+                  index={i}
+                  canAct={canAct}
+                  blockNote={canAct ? undefined : `${role} role can’t decide this — escalated to the Owner`}
+                />
+              );
+            })}
+          </AnimatePresence>
+        )}
+      </div>
 
-      {/* batch-approve summary modal */}
+      {/* batch summary modal */}
       <AnimatePresence>
         {batchOpen && (
-          <motion.div className="fixed inset-0 z-[70] flex items-center justify-center p-6" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <div className="absolute inset-0" style={BACKDROP_STYLE} onClick={() => setBatchOpen(false)} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            style={BACKDROP_STYLE}
+            className="fixed inset-0 z-[80] flex items-start justify-center pt-[18vh]"
+            onClick={() => setBatchOpen(false)}
+          >
             <motion.div
-              initial={{ scale: 0.96, y: 8, opacity: 0 }}
-              animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.96, y: 8, opacity: 0 }}
+              initial={{ scale: 0.96, y: -8 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.96, y: -8, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 220, damping: 26 }}
-              className="glass relative w-[480px] max-w-full rounded-modal border border-line-strong p-5 shadow-modal"
+              onClick={(e) => e.stopPropagation()}
+              className="glass w-[520px] max-w-[92vw] rounded-modal border border-line-strong p-6 shadow-modal"
             >
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-display text-h3 text-text-1">Approve {batchable.length} inside guardrails</h3>
-                <button onClick={() => setBatchOpen(false)} className="rounded p-1 text-text-3 hover:text-text-1"><X className="h-4 w-4" /></button>
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="font-display text-h3 text-text-1">Approve {batchable.length} inside guardrails?</div>
+                  <p className="mt-1 text-caption text-text-3">
+                    Each item passed its policy check. Everything logs to the Ledger and stays reversible where possible.
+                  </p>
+                </div>
+                <button onClick={() => setBatchOpen(false)} className="text-text-3 hover:text-text-1" aria-label="Close">
+                  <X className="h-4 w-4" />
+                </button>
               </div>
-              <div className="mb-3 space-y-1.5">
+              <div className="mt-4 space-y-2">
                 {batchable.map((a) => (
-                  <div key={a.id} className="flex items-center justify-between gap-3 text-small">
-                    <span className="min-w-0 flex-1 truncate text-text-1">{a.title}</span>
-                    {a.amount && <span className="font-mono text-data text-text-2">{fmtMoney(a.amount)}</span>}
+                  <div
+                    key={a.id}
+                    className="flex items-center justify-between gap-3 rounded-card border border-line-hairline bg-surface-2 px-3.5 py-2.5"
+                  >
+                    <div className="min-w-0">
+                      <div className="truncate text-small text-text-1">{a.title}</div>
+                      <div className="text-caption text-text-3">{a.context}</div>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      {a.amount && <span className="font-mono text-data text-ember">{fmtMoney(a.amount)}</span>}
+                      <span
+                        style={tintStyle('ok')}
+                        className="rounded-chip border px-1.5 py-0.5 text-[10px] font-medium text-ok"
+                      >
+                        ✓ inside policy
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
-              <p className="mb-4 text-caption text-text-3">
-                Each action passes the guardrail engine individually and is logged to the Ledger with Undo.
-              </p>
-              <button onClick={confirmBatch} className="w-full rounded-chip bg-ember px-4 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi">
-                Confirm all
-              </button>
+              <div className="mt-5 flex gap-2">
+                <button
+                  onClick={confirmBatch}
+                  className="flex items-center gap-1.5 rounded-chip bg-ember px-4 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi"
+                >
+                  <CircleCheck className="h-4 w-4" /> Confirm batch
+                </button>
+                <button
+                  onClick={() => setBatchOpen(false)}
+                  className="rounded-chip border border-line-strong px-4 py-2 text-small text-text-2 hover:text-text-1"
+                >
+                  Cancel
+                </button>
+              </div>
             </motion.div>
           </motion.div>
         )}
