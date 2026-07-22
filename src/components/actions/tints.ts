@@ -1,30 +1,37 @@
 // Tinted surfaces as inline styles (design.md §3 tones at 10–14% fill / ~30% border).
-// Tailwind v3 cannot apply /alpha modifiers to the var-backed palette tokens,
-// so tone-tinted chips/panels use these exact rgba values instead.
+// Values are computed from the live CSS theme variables, so they follow the
+// dark (Brass & Glacier) / light (Flagship Light) switch automatically.
 import type { CSSProperties } from 'react';
+import { trgb } from '@/lib/theme';
 
 export type TintTone = 'ember' | 'teal' | 'ok' | 'warn' | 'danger' | 'quote';
 
-const TINTS: Record<TintTone, { border: string; bg: string }> = {
-  ember: { border: 'rgba(232,145,45,0.32)', bg: 'rgba(232,145,45,0.14)' },
-  teal: { border: 'rgba(47,211,190,0.28)', bg: 'rgba(47,211,190,0.12)' },
-  ok: { border: 'rgba(76,195,138,0.30)', bg: 'rgba(76,195,138,0.10)' },
-  warn: { border: 'rgba(240,180,41,0.32)', bg: 'rgba(240,180,41,0.10)' },
-  danger: { border: 'rgba(227,93,91,0.32)', bg: 'rgba(227,93,91,0.10)' },
-  quote: { border: 'rgba(143,184,216,0.30)', bg: 'rgba(143,184,216,0.10)' },
+const ALPHAS: Record<TintTone, { border: number; bg: number }> = {
+  ember: { border: 0.32, bg: 0.14 },
+  teal: { border: 0.28, bg: 0.12 },
+  ok: { border: 0.30, bg: 0.10 },
+  warn: { border: 0.32, bg: 0.10 },
+  danger: { border: 0.32, bg: 0.10 },
+  quote: { border: 0.30, bg: 0.10 },
 };
 
 export function tintStyle(tone: TintTone): CSSProperties {
-  return { borderColor: TINTS[tone].border, background: TINTS[tone].bg };
+  const a = ALPHAS[tone];
+  return {
+    borderColor: trgb(`--${tone}-rgb`, a.border),
+    background: trgb(`--${tone}-rgb`, a.bg),
+  };
 }
 
 export function tintBorder(tone: TintTone): CSSProperties {
-  return { borderColor: TINTS[tone].border };
+  return { borderColor: trgb(`--${tone}-rgb`, ALPHAS[tone].border) };
 }
 
-/** modal backdrop per §6.2.3 — dims to rgba(14,13,11,0.6) + blur(8px) */
-export const BACKDROP_STYLE: CSSProperties = {
-  background: 'rgba(14,13,11,0.6)',
-  backdropFilter: 'blur(8px)',
-  WebkitBackdropFilter: 'blur(8px)',
-};
+/** modal backdrop per §6.2.3 — canvas dim + blur(8px), theme-aware */
+export function backdropStyle(): CSSProperties {
+  return {
+    background: trgb('--canvas-rgb', 0.6),
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+  };
+}

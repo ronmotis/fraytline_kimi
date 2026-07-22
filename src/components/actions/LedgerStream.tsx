@@ -4,6 +4,7 @@ import { Download, Search } from 'lucide-react';
 import { useStore, useTenantLedger } from '@/store';
 import type { LedgerEntry } from '@/store';
 import LedgerRow from '@/components/LedgerRow';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 type ActorFilter = 'all' | LedgerEntry['actor'];
@@ -48,6 +49,7 @@ function workflowOf(e: LedgerEntry): Exclude<WorkflowFilter, 'all'> {
 
 /** Section D — the Ledger: full-width governed stream with filters, undo, export. */
 export default function LedgerStream() {
+  useTheme(); // refresh inline animation colors on theme flip
   const ledger = useTenantLedger();
   const pushToast = useStore((s) => s.pushToast);
 
@@ -155,8 +157,8 @@ export default function LedgerStream() {
               <motion.div
                 key={e.id}
                 layout="position"
-                initial={{ opacity: 0, y: -10, backgroundColor: 'rgba(47,211,190,0.10)' }}
-                animate={{ opacity: 1, y: 0, backgroundColor: 'rgba(47,211,190,0)' }}
+                initial={{ opacity: 0, y: -10, backgroundColor: trgb('--teal-rgb', 0.10) }}
+                animate={{ opacity: 1, y: 0, backgroundColor: trgb('--teal-rgb', 0) }}
                 exit={{ opacity: 0 }}
                 transition={{
                   duration: 0.24,

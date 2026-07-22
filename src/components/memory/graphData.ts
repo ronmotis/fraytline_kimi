@@ -108,10 +108,10 @@ const savannah: TenantGraph = {
 export const GRAPHS: Record<string, TenantGraph> = { meridian, savannah };
 
 export const NODE_STYLE: Record<GraphNodeType, { fill: string; stroke: string; dashed?: boolean }> = {
-  lane: { fill: 'rgba(232,145,45,0.14)', stroke: 'var(--ember)' },
+  lane: { fill: 'color-mix(in srgb, var(--ember) 14%, transparent)', stroke: 'var(--ember)' },
   customer: { fill: 'var(--surface-3)', stroke: 'var(--text-1)' },
   fleet: { fill: 'var(--surface-2)', stroke: 'var(--text-3)' },
-  partner: { fill: 'rgba(47,211,190,0.12)', stroke: 'var(--teal)' },
+  partner: { fill: 'color-mix(in srgb, var(--teal) 12%, transparent)', stroke: 'var(--teal)' },
   habit: { fill: 'var(--surface-1)', stroke: 'var(--quote)', dashed: true },
 };
 

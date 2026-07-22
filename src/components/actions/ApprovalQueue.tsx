@@ -4,7 +4,7 @@ import { CircleCheck, ShieldCheck, X } from 'lucide-react';
 import { useStore, usePendingApprovals, fmtMoney } from '@/store';
 import type { ApprovalAction, Role } from '@/store';
 import QueueCard from './QueueCard';
-import { BACKDROP_STYLE, tintStyle } from './tints';
+import { backdropStyle, tintStyle } from './tints';
 import EmptyState from '@/components/EmptyState';
 
 /** role lens (actions.md · Role & Tenant Variations) */
@@ -93,7 +93,7 @@ export default function ApprovalQueue() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={BACKDROP_STYLE}
+            style={backdropStyle()}
             className="fixed inset-0 z-[80] flex items-start justify-center pt-[18vh]"
             onClick={() => setBatchOpen(false)}
           >

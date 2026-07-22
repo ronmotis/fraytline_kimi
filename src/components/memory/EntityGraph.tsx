@@ -7,6 +7,7 @@ import ConfidenceRing from '@/components/ConfidenceRing';
 import { tintStyle } from './tints';
 import { GRAPHS, NODE_LEGEND, NODE_STYLE } from './graphData';
 import type { GraphNode } from './graphData';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -70,6 +71,7 @@ export default function EntityGraph({
   flashText: string | null;
   onOpenStream: (tab: string, query?: string) => void;
 }) {
+  useTheme(); // refresh edge/glow colors on theme flip
   const facts = useTenantFacts();
   const graph = GRAPHS[tenantId] ?? GRAPHS.meridian;
   const [hoverId, setHoverId] = useState<string | null>(null);
@@ -149,7 +151,7 @@ export default function EntityGraph({
               y1={a.y}
               x2={b.x}
               y2={b.y}
-              stroke={isConnected ? 'var(--teal)' : 'rgba(235,225,205,0.16)'}
+              stroke={isConnected ? 'var(--teal)' : 'var(--line-strong)'}
               strokeWidth={e.w}
               strokeDasharray={e.dashed ? '4 4' : undefined}
               initial={{ pathLength: 0, opacity: 0 }}
@@ -192,7 +194,7 @@ export default function EntityGraph({
                   cursor: 'grab',
                   filter:
                     hovered || selectedNode || flashId === n.id
-                      ? 'drop-shadow(0 0 12px rgba(47,211,190,0.45))'
+                      ? `drop-shadow(0 0 12px ${trgb('--teal-rgb', 0.45)})`
                       : undefined,
                 }}
               >

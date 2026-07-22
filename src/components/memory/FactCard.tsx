@@ -6,6 +6,7 @@ import type { FactSource, MemoryFact } from '@/store';
 import ConfidenceRing from '@/components/ConfidenceRing';
 import { tintBorder, tintStyle } from './tints';
 import type { TintTone } from './tints';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -29,6 +30,7 @@ export default function FactCard({
   highlight: boolean;
   onTeach: (prefill: string) => void;
 }) {
+  useTheme(); // refresh flash/highlight tint on theme flip
   const confirmFact = useStore((s) => s.confirmFact);
   const correctFact = useStore((s) => s.correctFact);
   const forgetFact = useStore((s) => s.forgetFact);
@@ -86,11 +88,11 @@ export default function FactCard({
         opacity: forgetting ? 0.4 : 1,
         y: 0,
         backgroundColor: flash
-          ? ['rgba(47,211,190,0)', 'rgba(47,211,190,0.16)', 'rgba(47,211,190,0)']
-          : 'rgba(47,211,190,0)',
+          ? [trgb('--teal-rgb', 0), trgb('--teal-rgb', 0.16), trgb('--teal-rgb', 0)]
+          : trgb('--teal-rgb', 0),
         boxShadow: highlight
-          ? ['0 0 0 1px rgba(47,211,190,0.9)', '0 0 0 1px rgba(47,211,190,0)']
-          : '0 0 0 1px rgba(47,211,190,0)',
+          ? [`0 0 0 1px ${trgb('--teal-rgb', 0.9)}`, `0 0 0 1px ${trgb('--teal-rgb', 0)}`]
+          : `0 0 0 1px ${trgb('--teal-rgb', 0)}`,
       }}
       exit={{ opacity: 0, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
       transition={{

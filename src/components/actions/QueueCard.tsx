@@ -7,6 +7,7 @@ import ConfidenceRing from '@/components/ConfidenceRing';
 import MemoryChip from '@/components/MemoryChip';
 import { tintBorder, tintStyle } from './tints';
 import type { TintTone } from './tints';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -47,6 +48,7 @@ export default function QueueCard({
   canAct: boolean;
   blockNote?: string;
 }) {
+  useTheme(); // refresh inline colors on theme flip
   const approveAction = useStore((s) => s.approveAction);
   const rejectAction = useStore((s) => s.rejectAction);
   const pushToast = useStore((s) => s.pushToast);
@@ -118,7 +120,7 @@ export default function QueueCard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{ background: 'rgba(22,20,15,0.92)' }}
+            style={{ background: trgb('--canvas-rgb', 0.92) }}
             className="absolute inset-0 z-10 flex items-center justify-center"
           >
             <motion.div

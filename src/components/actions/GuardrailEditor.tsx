@@ -3,7 +3,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Pencil, Plus, ShieldCheck, Sparkles, X } from 'lucide-react';
 import { useStore, useActiveTenant } from '@/store';
 import type { Policy } from '@/store';
-import { BACKDROP_STYLE, tintStyle } from './tints';
+import { backdropStyle, tintStyle } from './tints';
+import { trgb, useTheme } from '@/lib/theme';
 import { cn } from '@/lib/utils';
 
 const EASE = [0.16, 1, 0.3, 1] as [number, number, number, number];
@@ -61,6 +62,7 @@ function guessScope(text: string): { scope: string[]; condition: string } {
 
 /** Section C — Guardrails: plain-language policy list, toggles, NL rule creation. */
 export default function GuardrailEditor() {
+  useTheme(); // refresh inline tint/animation colors on theme flip
   const tenant = useActiveTenant();
   const policies = useStore((s) => s.policies.filter((p) => p.tenantId === s.activeTenantId));
   const pushToast = useStore((s) => s.pushToast);
@@ -228,8 +230,8 @@ export default function GuardrailEditor() {
           {localRules.map((r) => (
             <motion.div
               key={r.id}
-              initial={{ opacity: 0, y: 8, borderColor: 'rgba(47,211,190,0.9)' }}
-              animate={{ opacity: 1, y: 0, borderColor: 'rgba(235,225,205,0.08)' }}
+              initial={{ opacity: 0, y: 8, borderColor: trgb('--teal-rgb', 0.9) }}
+              animate={{ opacity: 1, y: 0, borderColor: trgb('--line-rgb', 0.08) }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.5, ease: EASE, borderColor: { duration: 1.4 } }}
               className="rounded-card border bg-surface-1 p-4"
@@ -366,7 +368,7 @@ export default function GuardrailEditor() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={BACKDROP_STYLE}
+            style={backdropStyle()}
             className="fixed inset-0 z-[80] flex items-start justify-center pt-[18vh]"
             onClick={() => setSuspendTarget(null)}
           >
