@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Fraytline Signal Field tokens (design.md §3) — dark-first */
+    --canvas: #0E0D0B;
+    --surface-1: #16140F;
+    --surface-2: #1D1A14;
+    --surface-3: #262219;
+    --glass: rgba(22, 20, 15, 0.72);
+    --line-hairline: rgba(235, 225, 205, 0.08);
+    --line-strong: rgba(235, 225, 205, 0.16);
+    --text-1: #F2EDE3;
+    --text-2: #A89F8E;
+    --text-3: #6E675A;
+    --ember: #E8912D;
+    --ember-hi: #F5A94B;
+    --ember-dim: rgba(232, 145, 45, 0.14);
+    --teal: #2FD3BE;
+    --teal-dim: rgba(47, 211, 190, 0.12);
+    --warn: #F0B429;
+    --danger: #E35D5B;
+    --ok: #4CC38A;
+    --quote: #8FB8D8;
+
+    /* shadcn/ui compat (mapped onto the dark canvas) */
+    --background: 30 9% 5%;
+    --foreground: 40 27% 92%;
+    --card: 36 14% 7%;
+    --card-foreground: 40 27% 92%;
+    --popover: 36 14% 7%;
+    --popover-foreground: 40 27% 92%;
+    --primary: 32 81% 55%;
+    --primary-foreground: 30 9% 5%;
+    --secondary: 38 16% 10%;
+    --secondary-foreground: 40 27% 92%;
+    --muted: 38 16% 10%;
+    --muted-foreground: 36 11% 57%;
+    --accent: 38 16% 12%;
+    --accent-foreground: 40 27% 92%;
+    --destructive: 2 70% 63%;
+    --destructive-foreground: 40 27% 92%;
+    --border: 40 20% 90%;
+    --input: 40 20% 90%;
+    --ring: 170 65% 51%;
+    --radius: 0.625rem;
+  }
+
+  * {
+    border-color: var(--line-hairline);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-canvas text-text-1 font-sans text-body antialiased;
+    letter-spacing: 0;
+  }
+
+  .font-display {
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono,
+  code,
+  kbd {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* focus rings — 1px teal */
+  *:focus-visible {
+    outline: 1px solid var(--teal);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(47, 211, 190, 0.28);
+    color: var(--text-1);
+  }
+
+  /* scrollbar styling — instrument-grade */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--surface-3);
+    border-radius: 999px;
+    border: 2px solid var(--canvas);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-3);
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-3) transparent;
+  }
+
+  /* film grain over large surfaces */
+  .grain::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    background-image: url('/noise-texture.png');
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+  }
+
+  /* glass overlay surface */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  /* Thinking shimmer line */
+  .thinking-line {
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+
+  /* Living Border — rotating teal conic hairline (mask ring, no overflow clipping) */
+  @property --lb-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+  .living-border {
+    position: relative;
+  }
+  .living-border::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(from var(--lb-angle), var(--teal), transparent 30%, transparent 70%, var(--teal));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: lb-rotate 8s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes lb-rotate {
+    to { --lb-angle: 360deg; }
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .living-border::after,
+  .animate-pulse-dot,
+  .animate-pulse-dot-slow,
+  .animate-breathe,
+  .animate-shimmer {
+    animation: none !important;
+  }
+}
