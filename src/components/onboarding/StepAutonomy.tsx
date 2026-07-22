@@ -4,6 +4,7 @@ import { ShieldCheck } from 'lucide-react';
 import AutonomyDial from '@/components/AutonomyDial';
 import { useStore } from '@/store';
 import { EASE_OUT_EXPO } from './types';
+import { cssVar, trgb, useTheme } from '@/lib/theme';
 
 const ROWS = [
   { key: 'quoting', label: 'Quote pricing & sending', note: 'I draft from memory; you send.' },
@@ -18,6 +19,7 @@ const ROWS = [
  * Dials mutate the real store — the Autonomy page reflects these immediately.
  */
 export default function StepAutonomy({ onEnter }: { onEnter: () => void }) {
+  useTheme(); // refresh CTA colors on theme flip
   const autonomy = useStore((s) => s.autonomy);
   const setAutonomy = useStore((s) => s.setAutonomy);
   const initialized = useRef(false);
@@ -95,13 +97,13 @@ export default function StepAutonomy({ onEnter }: { onEnter: () => void }) {
             className="rounded-chip bg-ember px-7 py-3 text-body-strong text-canvas"
             animate={{
               boxShadow: [
-                '0 0 24px rgba(232,145,45,0.15)',
-                '0 0 24px rgba(232,145,45,0.42)',
-                '0 0 24px rgba(232,145,45,0.15)',
+                `0 0 24px ${trgb('--ember-rgb', 0.15)}`,
+                `0 0 24px ${trgb('--ember-rgb', 0.42)}`,
+                `0 0 24px ${trgb('--ember-rgb', 0.15)}`,
               ],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            whileHover={{ y: -1, backgroundColor: '#F5A94B', transition: { duration: 0.12 } }}
+            whileHover={{ y: -1, backgroundColor: cssVar('--ember-hi'), transition: { duration: 0.12 } }}
           >
             Enter Fraytline
           </motion.button>

@@ -1,6 +1,7 @@
 import { Component, Suspense, lazy, useState } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import type { SignalControl } from './types';
+import { trgb, useTheme } from '@/lib/theme';
 
 const SignalFieldCanvas = lazy(() => import('./SignalFieldCanvas'));
 
@@ -15,6 +16,7 @@ function canUseWebGL() {
 
 /** Static fallback per design.md §7: signal-field-fallback.png + radial gradient. */
 function Fallback() {
+  useTheme(); // refresh halo tint on theme flip
   return (
     <div className="absolute inset-0" aria-hidden>
       <div
@@ -24,8 +26,7 @@ function Fallback() {
       <div
         className="absolute inset-0"
         style={{
-          background:
-            'radial-gradient(ellipse 80% 60% at 50% 45%, rgba(47,211,190,0.05), transparent 70%)',
+          background: `radial-gradient(ellipse 80% 60% at 50% 45%, ${trgb('--teal-rgb', 0.05)}, transparent 70%)`,
         }}
       />
     </div>

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { CharReveal, WordReveal } from './bits';
 import { SPRING_SNAPPY } from './types';
+import { cssVar, trgb, useTheme } from '@/lib/theme';
 
 /**
  * Step 0 — Welcome (onboarding.md §Step 0).
@@ -13,6 +14,7 @@ export default function StepWelcome({
   onBegin: () => void;
   onSample: () => void;
 }) {
+  useTheme(); // refresh CTA colors on theme flip
   return (
     <div className="relative z-10 flex min-h-[100dvh] flex-col items-center justify-center px-6">
       <div className="w-full max-w-[760px]">
@@ -55,13 +57,13 @@ export default function StepWelcome({
             className="rounded-chip bg-ember px-7 py-3 text-body-strong text-canvas"
             animate={{
               boxShadow: [
-                '0 0 24px rgba(232,145,45,0.15)',
-                '0 0 24px rgba(232,145,45,0.42)',
-                '0 0 24px rgba(232,145,45,0.15)',
+                `0 0 24px ${trgb('--ember-rgb', 0.15)}`,
+                `0 0 24px ${trgb('--ember-rgb', 0.42)}`,
+                `0 0 24px ${trgb('--ember-rgb', 0.15)}`,
               ],
             }}
             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            whileHover={{ y: -1, backgroundColor: '#F5A94B', transition: { duration: 0.12 } }}
+            whileHover={{ y: -1, backgroundColor: cssVar('--ember-hi'), transition: { duration: 0.12 } }}
           >
             Begin
           </motion.button>
