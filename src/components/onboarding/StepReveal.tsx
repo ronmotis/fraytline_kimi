@@ -371,7 +371,7 @@ export default function StepReveal({
           <div ref={headlineRef} className="font-display text-display text-text-1">
             {HEADLINE.split('').map((ch, i) => (
               <span key={i} className="reveal-char inline-block">
-                {ch === ' ' ? ' ' : ch}
+                {ch === ' ' ? ' ' : ch}
               </span>
             ))}
           </div>
