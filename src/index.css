@@ -6,48 +6,112 @@
 
 @layer base {
   :root {
-    /* Fraytline Signal Field tokens (design.md §3) — dark-first */
-    --canvas: #0E0D0B;
-    --surface-1: #16140F;
-    --surface-2: #1D1A14;
-    --surface-3: #262219;
-    --glass: rgba(22, 20, 15, 0.72);
-    --line-hairline: rgba(235, 225, 205, 0.08);
-    --line-strong: rgba(235, 225, 205, 0.16);
-    --text-1: #F2EDE3;
-    --text-2: #A89F8E;
-    --text-3: #6E675A;
-    --ember: #E8912D;
-    --ember-hi: #F5A94B;
-    --ember-dim: rgba(232, 145, 45, 0.14);
-    --teal: #2FD3BE;
-    --teal-dim: rgba(47, 211, 190, 0.12);
-    --warn: #F0B429;
-    --danger: #E35D5B;
-    --ok: #4CC38A;
-    --quote: #8FB8D8;
+    /* ============================================================
+       Fraytline theme tokens — DARK (default): "Brass & Glacier"
+       Enterprise ink-navy, brass = operator action, glacier = intelligence
+       ============================================================ */
+    --canvas: #070d1a;      --canvas-rgb: 7 13 26;
+    --surface-1: #0c1425;   --surface-1-rgb: 12 20 37;
+    --surface-2: #1f2937;   --surface-2-rgb: 31 41 55;
+    --surface-3: #374151;   --surface-3-rgb: 55 65 81;
+    --glass: rgba(10, 16, 32, 0.72);
+    --line-hairline: rgba(148, 163, 184, 0.08);
+    --line-strong: rgba(148, 163, 184, 0.18);
+    --line-rgb: 148 163 184;
+    --text-1: #f1f5f9;      --text-1-rgb: 241 245 249;
+    --text-2: #aab8cc;      --text-2-rgb: 170 184 204;
+    --text-3: #72849c;      --text-3-rgb: 114 132 156;
+    --ember: #d9a23b;       --ember-rgb: 217 162 59;
+    --ember-hi: #e8b95c;    --ember-hi-rgb: 232 185 92;
+    --ember-dim: rgba(217, 162, 59, 0.14);
+    --teal: #7fc2de;        --teal-rgb: 127 194 222;
+    --teal-dim: rgba(79, 168, 206, 0.12);
+    --warn: #d99a26;        --warn-rgb: 217 154 38;
+    --danger: #e05d4d;      --danger-rgb: 224 93 77;
+    --ok: #5cc38f;          --ok-rgb: 92 195 143;
+    --quote: #94a3b8;       --quote-rgb: 148 163 184;
+    --glow-ember: rgba(217, 162, 59, 0.30);
+    --glow-teal: rgba(79, 168, 206, 0.26);
+    --glow-danger: rgba(224, 93, 77, 0.30);
+    --glow-warn: rgba(217, 154, 38, 0.40);
+    --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.6);
+    --selection: rgba(79, 168, 206, 0.30);
 
     /* shadcn/ui compat (mapped onto the dark canvas) */
-    --background: 30 9% 5%;
-    --foreground: 40 27% 92%;
-    --card: 36 14% 7%;
-    --card-foreground: 40 27% 92%;
-    --popover: 36 14% 7%;
-    --popover-foreground: 40 27% 92%;
-    --primary: 32 81% 55%;
-    --primary-foreground: 30 9% 5%;
-    --secondary: 38 16% 10%;
-    --secondary-foreground: 40 27% 92%;
-    --muted: 38 16% 10%;
-    --muted-foreground: 36 11% 57%;
-    --accent: 38 16% 12%;
-    --accent-foreground: 40 27% 92%;
-    --destructive: 2 70% 63%;
-    --destructive-foreground: 40 27% 92%;
-    --border: 40 20% 90%;
-    --input: 40 20% 90%;
-    --ring: 170 65% 51%;
+    --background: 222 58% 6%;
+    --foreground: 210 33% 96%;
+    --card: 220 52% 8%;
+    --card-foreground: 210 33% 96%;
+    --popover: 220 52% 8%;
+    --popover-foreground: 210 33% 96%;
+    --primary: 39 66% 54%;
+    --primary-foreground: 222 58% 6%;
+    --secondary: 216 28% 17%;
+    --secondary-foreground: 210 33% 96%;
+    --muted: 216 28% 17%;
+    --muted-foreground: 214 21% 60%;
+    --accent: 216 19% 27%;
+    --accent-foreground: 210 33% 96%;
+    --destructive: 8 68% 59%;
+    --destructive-foreground: 210 33% 96%;
+    --border: 214 25% 88%;
+    --input: 214 25% 88%;
+    --ring: 200 60% 68%;
     --radius: 0.625rem;
+  }
+
+  [data-theme='light'] {
+    /* ============================================================
+       LIGHT: "Flagship Light" — crisp white freight ops,
+       coral = action, royal blue = intelligence
+       ============================================================ */
+    --canvas: #F6F8FC;      --canvas-rgb: 246 248 252;
+    --surface-1: #FFFFFF;   --surface-1-rgb: 255 255 255;
+    --surface-2: #EDF1F9;   --surface-2-rgb: 237 241 249;
+    --surface-3: #DFE7F5;   --surface-3-rgb: 223 231 245;
+    --glass: rgba(255, 255, 255, 0.72);
+    --line-hairline: rgba(12, 22, 58, 0.09);
+    --line-strong: rgba(12, 22, 58, 0.19);
+    --line-rgb: 12 22 58;
+    --text-1: #0B1230;      --text-1-rgb: 11 18 48;
+    --text-2: #3C4666;      --text-2-rgb: 60 70 102;
+    --text-3: #7A84A6;      --text-3-rgb: 122 132 166;
+    --ember: #E04A2F;       --ember-rgb: 224 74 47;
+    --ember-hi: #C43E26;    --ember-hi-rgb: 196 62 38;
+    --ember-dim: rgba(224, 74, 47, 0.10);
+    --teal: #3451E0;        --teal-rgb: 52 81 224;
+    --teal-dim: rgba(52, 81, 224, 0.08);
+    --warn: #96640A;        --warn-rgb: 150 100 10;
+    --danger: #B8232F;      --danger-rgb: 184 35 47;
+    --ok: #0F7B4C;          --ok-rgb: 15 123 76;
+    --quote: #5A6FA8;       --quote-rgb: 90 111 168;
+    --glow-ember: rgba(224, 74, 47, 0.18);
+    --glow-teal: rgba(52, 81, 224, 0.16);
+    --glow-danger: rgba(184, 35, 47, 0.20);
+    --glow-warn: rgba(150, 100, 10, 0.35);
+    --shadow-modal: 0 24px 80px rgba(11, 18, 48, 0.18);
+    --selection: rgba(52, 81, 224, 0.22);
+
+    /* shadcn/ui compat (light) */
+    --background: 220 56% 97%;
+    --foreground: 228 62% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 228 62% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 228 62% 12%;
+    --primary: 9 73% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 43% 95%;
+    --secondary-foreground: 228 62% 12%;
+    --muted: 220 43% 95%;
+    --muted-foreground: 229 21% 56%;
+    --accent: 220 43% 92%;
+    --accent-foreground: 228 62% 12%;
+    --destructive: 355 68% 46%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 22% 80%;
+    --input: 220 22% 80%;
+    --ring: 228 72% 54%;
   }
 
   * {
@@ -56,6 +120,9 @@
 
   html {
     color-scheme: dark;
+  }
+  [data-theme='light'] {
+    color-scheme: light;
   }
 
   body {
@@ -73,14 +140,14 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* focus rings — 1px teal */
+  /* focus rings — 1px intelligence accent */
   *:focus-visible {
     outline: 1px solid var(--teal);
     outline-offset: 2px;
   }
 
   ::selection {
-    background: rgba(47, 211, 190, 0.28);
+    background: var(--selection);
     color: var(--text-1);
   }
 
@@ -117,6 +184,10 @@
     background-size: 256px 256px;
     opacity: 0.04;
     mix-blend-mode: overlay;
+  }
+  [data-theme='light'] .grain::before {
+    opacity: 0.05;
+    mix-blend-mode: multiply;
   }
 
   /* glass overlay surface */

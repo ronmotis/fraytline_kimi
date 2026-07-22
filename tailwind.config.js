@@ -5,26 +5,27 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Fraytline "Signal Field" tokens (design.md §3) — <alpha-value> enabled so
-        // Tailwind /opacity modifiers work (CSS vars below remain for direct var() usage)
-        canvas: 'rgb(14 13 11 / <alpha-value>)',
-        'surface-1': 'rgb(22 20 15 / <alpha-value>)',
-        'surface-2': 'rgb(29 26 20 / <alpha-value>)',
-        'surface-3': 'rgb(38 34 25 / <alpha-value>)',
+        // Fraytline theme tokens — driven by CSS custom properties so the
+        // dark (Brass & Glacier, default) and light (Flagship Light) themes
+        // switch via [data-theme] on <html>. <alpha-value> keeps /opacity modifiers working.
+        canvas: 'rgb(var(--canvas-rgb) / <alpha-value>)',
+        'surface-1': 'rgb(var(--surface-1-rgb) / <alpha-value>)',
+        'surface-2': 'rgb(var(--surface-2-rgb) / <alpha-value>)',
+        'surface-3': 'rgb(var(--surface-3-rgb) / <alpha-value>)',
         'line-hairline': 'var(--line-hairline)',
         'line-strong': 'var(--line-strong)',
-        'text-1': 'rgb(242 237 227 / <alpha-value>)',
-        'text-2': 'rgb(168 159 142 / <alpha-value>)',
-        'text-3': 'rgb(110 103 90 / <alpha-value>)',
-        ember: 'rgb(232 145 45 / <alpha-value>)',
-        'ember-hi': 'rgb(245 169 75 / <alpha-value>)',
+        'text-1': 'rgb(var(--text-1-rgb) / <alpha-value>)',
+        'text-2': 'rgb(var(--text-2-rgb) / <alpha-value>)',
+        'text-3': 'rgb(var(--text-3-rgb) / <alpha-value>)',
+        ember: 'rgb(var(--ember-rgb) / <alpha-value>)',
+        'ember-hi': 'rgb(var(--ember-hi-rgb) / <alpha-value>)',
         'ember-dim': 'var(--ember-dim)',
-        teal: 'rgb(47 211 190 / <alpha-value>)',
+        teal: 'rgb(var(--teal-rgb) / <alpha-value>)',
         'teal-dim': 'var(--teal-dim)',
-        warn: 'rgb(240 180 41 / <alpha-value>)',
-        danger: 'rgb(227 93 91 / <alpha-value>)',
-        ok: 'rgb(76 195 138 / <alpha-value>)',
-        quote: 'rgb(143 184 216 / <alpha-value>)',
+        warn: 'rgb(var(--warn-rgb) / <alpha-value>)',
+        danger: 'rgb(var(--danger-rgb) / <alpha-value>)',
+        ok: 'rgb(var(--ok-rgb) / <alpha-value>)',
+        quote: 'rgb(var(--quote-rgb) / <alpha-value>)',
         // shadcn/ui compat
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -69,10 +70,11 @@ module.exports = {
         xs: "calc(var(--radius) - 6px)",
       },
       boxShadow: {
-        'glow-ember': '0 0 24px rgba(232,145,45,0.25)',
-        'glow-teal': '0 0 24px rgba(47,211,190,0.22)',
-        'glow-danger': '0 0 20px rgba(227,93,91,0.28)',
-        modal: '0 24px 80px rgba(0,0,0,0.55)',
+        'glow-ember': '0 0 24px var(--glow-ember)',
+        'glow-teal': '0 0 24px var(--glow-teal)',
+        'glow-danger': '0 0 20px var(--glow-danger)',
+        'glow-warn': '0 0 16px var(--glow-warn)',
+        modal: 'var(--shadow-modal)',
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
       },
       transitionTimingFunction: {
