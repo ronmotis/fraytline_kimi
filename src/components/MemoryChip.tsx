@@ -70,7 +70,7 @@ export default function MemoryChip({
       onMouseLeave={() => { setOpen(false); setEditing(false); }}
     >
       <motion.span
-        initial={{ scale: 0.9, opacity: 1 }}
+        initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={SPRING}
         className="inline-flex cursor-default items-center gap-1.5 rounded-chip border border-teal/25 bg-teal-dim px-1.5 py-0.5 align-middle text-caption text-teal"
