@@ -7,8 +7,12 @@
     <script>
       /* theme boot: apply saved choice before first paint — dark is the default */
       (function () {
+        var VALID = ['dark', 'light', 'fluent', 'noir', 'harbor'];
         var t = 'dark';
-        try { t = localStorage.getItem('fraytline-theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+        try {
+          var s = localStorage.getItem('fraytline-theme');
+          if (s && VALID.indexOf(s) !== -1) t = s;
+        } catch (e) {}
         document.documentElement.dataset.theme = t;
       })();
     </script>

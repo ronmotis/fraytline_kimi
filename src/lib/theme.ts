@@ -1,13 +1,34 @@
 import { useEffect, useState } from 'react';
 
-export type ThemeName = 'dark' | 'light';
+export type ThemeName = 'dark' | 'light' | 'fluent' | 'noir' | 'harbor';
+
+export interface ThemeMeta {
+  id: ThemeName;
+  label: string;
+  /** short descriptor shown in the picker */
+  hint: string;
+  /** swatch dot in the picker */
+  swatch: string;
+  mode: 'dark' | 'light';
+}
+
+/** Registry order = picker order. Dark (Brass & Glacier) is the default. */
+export const THEMES: ThemeMeta[] = [
+  { id: 'dark', label: 'Brass & Glacier', hint: 'ink-navy · brass action', swatch: '#d9a23b', mode: 'dark' },
+  { id: 'noir', label: 'Noir Studio', hint: 'monochrome · white action', swatch: '#8E7CF0', mode: 'dark' },
+  { id: 'light', label: 'Flagship Light', hint: 'crisp white · coral action', swatch: '#E04A2F', mode: 'light' },
+  { id: 'fluent', label: 'Fluent Ops', hint: 'Microsoft enterprise blue', swatch: '#0F6CBD', mode: 'light' },
+  { id: 'harbor', label: 'Harbor Ops', hint: 'Fraytline orange · navy', swatch: '#FF7A1A', mode: 'light' },
+];
 
 const KEY = 'fraytline-theme';
 const EVENT = 'fraytline-theme';
+const VALID = new Set<string>(THEMES.map((t) => t.id));
 
 /** Read the active theme from <html data-theme>. Dark is the default. */
 export function getTheme(): ThemeName {
-  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+  const v = document.documentElement.dataset.theme;
+  return (v && VALID.has(v) ? v : 'dark') as ThemeName;
 }
 
 /** Apply + persist a theme, then notify subscribers. */
@@ -21,6 +42,7 @@ export function setTheme(t: ThemeName) {
   window.dispatchEvent(new CustomEvent(EVENT));
 }
 
+/** Cycle dark → light (quick flip between the two flagship themes). */
 export function toggleTheme() {
   setTheme(getTheme() === 'dark' ? 'light' : 'dark');
 }
@@ -38,7 +60,7 @@ export function trgb(name: string, alpha: number): string {
   return `rgba(${cssVar(name).replace(/\s+/g, ',')},${alpha})`;
 }
 
-/** React hook — re-renders the component when the theme flips. */
+/** React hook — re-renders the component when the theme changes. */
 export function useTheme(): ThemeName {
   const [t, setT] = useState<ThemeName>(getTheme());
   useEffect(() => {

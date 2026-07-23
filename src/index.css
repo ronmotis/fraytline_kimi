@@ -114,6 +114,172 @@
     --ring: 228 72% 54%;
   }
 
+  [data-theme='fluent'] {
+    /* ============================================================
+       LIGHT: "Fluent Ops" — Microsoft Fluent 2.0 enterprise.
+       Quiet grays, hairline borders, one confident blue = action,
+       Fluent teal = intelligence.
+       ============================================================ */
+    --canvas: #F5F5F5;      --canvas-rgb: 245 245 245;
+    --surface-1: #FFFFFF;   --surface-1-rgb: 255 255 255;
+    --surface-2: #F0F0F0;   --surface-2-rgb: 240 240 240;
+    --surface-3: #E8E8E8;   --surface-3-rgb: 232 232 232;
+    --glass: rgba(255, 255, 255, 0.82);
+    --line-hairline: rgba(0, 0, 0, 0.07);
+    --line-strong: rgba(0, 0, 0, 0.16);
+    --line-rgb: 36 36 36;
+    --text-1: #242424;      --text-1-rgb: 36 36 36;
+    --text-2: #424242;      --text-2-rgb: 66 66 66;
+    --text-3: #707070;      --text-3-rgb: 112 112 112;
+    --ember: #0F6CBD;       --ember-rgb: 15 108 189;
+    --ember-hi: #115EA3;    --ember-hi-rgb: 17 94 163;
+    --ember-dim: rgba(15, 108, 189, 0.09);
+    --teal: #038387;        --teal-rgb: 3 131 135;
+    --teal-dim: rgba(3, 131, 135, 0.10);
+    --warn: #CA5010;        --warn-rgb: 202 80 16;
+    --danger: #D13438;      --danger-rgb: 209 52 56;
+    --ok: #107C10;          --ok-rgb: 16 124 16;
+    --quote: #5B5FC7;       --quote-rgb: 91 95 199;
+    --glow-ember: rgba(15, 108, 189, 0.18);
+    --glow-teal: rgba(3, 131, 135, 0.16);
+    --glow-danger: rgba(209, 52, 56, 0.20);
+    --glow-warn: rgba(202, 80, 16, 0.35);
+    --shadow-modal: 0 24px 64px rgba(0, 0, 0, 0.16);
+    --selection: rgba(15, 108, 189, 0.22);
+
+    /* shadcn/ui compat (fluent light) */
+    --background: 0 0% 96%;
+    --foreground: 0 0% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 14%;
+    --primary: 208 83% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 94%;
+    --secondary-foreground: 0 0% 14%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 44%;
+    --accent: 0 0% 91%;
+    --accent-foreground: 0 0% 14%;
+    --destructive: 359 64% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 86%;
+    --input: 0 0% 86%;
+    --ring: 183 96% 27%;
+  }
+
+  [data-theme='noir'] {
+    /* ============================================================
+       DARK: "Noir Studio" — designer-envy monochrome.
+       Near-black canvas, hairline white borders, INVERTED WHITE
+       primary action, violet = intelligence.
+       ============================================================ */
+    --canvas: #0A0A0B;      --canvas-rgb: 10 10 11;
+    --surface-1: #111113;   --surface-1-rgb: 17 17 19;
+    --surface-2: #1A1A1F;   --surface-2-rgb: 26 26 31;
+    --surface-3: #26262D;   --surface-3-rgb: 38 38 45;
+    --glass: rgba(17, 17, 19, 0.74);
+    --line-hairline: rgba(255, 255, 255, 0.07);
+    --line-strong: rgba(255, 255, 255, 0.16);
+    --line-rgb: 255 255 255;
+    --text-1: #FAFAFA;      --text-1-rgb: 250 250 250;
+    --text-2: #A1A1AA;      --text-2-rgb: 161 161 170;
+    --text-3: #5C5C66;      --text-3-rgb: 92 92 102;
+    --ember: #FAFAFA;       --ember-rgb: 250 250 250;
+    --ember-hi: #D4D4D8;    --ember-hi-rgb: 212 212 216;
+    --ember-dim: rgba(250, 250, 250, 0.08);
+    --teal: #8E7CF0;        --teal-rgb: 142 124 240;
+    --teal-dim: rgba(142, 124, 240, 0.14);
+    --warn: #FFB224;        --warn-rgb: 255 178 36;
+    --danger: #E5484D;      --danger-rgb: 229 72 77;
+    --ok: #46A758;          --ok-rgb: 70 167 88;
+    --quote: #7C8CF8;       --quote-rgb: 124 140 248;
+    --glow-ember: rgba(250, 250, 250, 0.14);
+    --glow-teal: rgba(142, 124, 240, 0.30);
+    --glow-danger: rgba(229, 72, 77, 0.30);
+    --glow-warn: rgba(255, 178, 36, 0.40);
+    --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.7);
+    --selection: rgba(142, 124, 240, 0.35);
+
+    /* shadcn/ui compat (noir dark) */
+    --background: 240 6% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 6% 7%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 6% 7%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 6% 4%;
+    --secondary: 240 4% 10%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 10%;
+    --muted-foreground: 240 4% 65%;
+    --accent: 240 4% 15%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 358 75% 59%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 250 76% 71%;
+  }
+
+  [data-theme='harbor'] {
+    /* ============================================================
+       LIGHT: "Harbor Ops" — the Fraytline palette.
+       Deep Navy text, Operational Blue intelligence, Fraytline
+       Orange reserved for operator action (navy text on the
+       button for AA contrast).
+       ============================================================ */
+    --canvas: #F4F7F9;      --canvas-rgb: 244 247 249;
+    --surface-1: #FFFFFF;   --surface-1-rgb: 255 255 255;
+    --surface-2: #E9EFF4;   --surface-2-rgb: 233 239 244;
+    --surface-3: #D8E2EB;   --surface-3-rgb: 216 226 235;
+    --glass: rgba(255, 255, 255, 0.76);
+    --line-hairline: rgba(7, 21, 34, 0.09);
+    --line-strong: rgba(7, 21, 34, 0.20);
+    --line-rgb: 7 21 34;
+    --text-1: #071522;      --text-1-rgb: 7 21 34;
+    --text-2: #123B5D;      --text-2-rgb: 18 59 93;
+    --text-3: #5A7186;      --text-3-rgb: 90 113 134;
+    --ember: #FF7A1A;       --ember-rgb: 255 122 26;
+    --ember-hi: #F06500;    --ember-hi-rgb: 240 101 0;
+    --ember-dim: rgba(255, 122, 26, 0.10);
+    --teal: #123B5D;        --teal-rgb: 18 59 93;
+    --teal-dim: rgba(18, 59, 93, 0.09);
+    --warn: #C77414;        --warn-rgb: 199 116 20;
+    --danger: #E34F4F;      --danger-rgb: 227 79 79;
+    --ok: #17A673;          --ok-rgb: 23 166 115;
+    --quote: #54708C;       --quote-rgb: 84 112 140;
+    --glow-ember: rgba(255, 122, 26, 0.22);
+    --glow-teal: rgba(18, 59, 93, 0.18);
+    --glow-danger: rgba(227, 79, 79, 0.20);
+    --glow-warn: rgba(199, 116, 20, 0.35);
+    --shadow-modal: 0 24px 80px rgba(7, 21, 34, 0.20);
+    --selection: rgba(255, 122, 26, 0.22);
+
+    /* shadcn/ui compat (harbor light) */
+    --background: 204 33% 97%;
+    --foreground: 209 65% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 209 65% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 209 65% 8%;
+    --primary: 26 100% 55%;
+    --primary-foreground: 209 65% 8%;
+    --secondary: 205 33% 94%;
+    --secondary-foreground: 209 65% 8%;
+    --muted: 205 33% 94%;
+    --muted-foreground: 210 19% 44%;
+    --accent: 205 30% 90%;
+    --accent-foreground: 209 65% 8%;
+    --destructive: 0 74% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 206 25% 85%;
+    --input: 206 25% 85%;
+    --ring: 209 68% 23%;
+  }
+
   * {
     border-color: var(--line-hairline);
   }
@@ -121,8 +287,13 @@
   html {
     color-scheme: dark;
   }
-  [data-theme='light'] {
+  [data-theme='light'],
+  [data-theme='fluent'],
+  [data-theme='harbor'] {
     color-scheme: light;
+  }
+  [data-theme='noir'] {
+    color-scheme: dark;
   }
 
   body {
@@ -185,7 +356,9 @@
     opacity: 0.04;
     mix-blend-mode: overlay;
   }
-  [data-theme='light'] .grain::before {
+  [data-theme='light'] .grain::before,
+  [data-theme='fluent'] .grain::before,
+  [data-theme='harbor'] .grain::before {
     opacity: 0.05;
     mix-blend-mode: multiply;
   }
