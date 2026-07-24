@@ -1,9 +1,5 @@
 // Canonical demo universe (design.md §12). All pages reference this data.
-import type {
-  Tenant, Person, Customer, Movement, Quote, FleetUnit, Driver,
-  MemoryFact, Policy, ApprovalAction, LedgerEntry, ExchangeLoad,
-  ExchangeCapacity, DockMessage, AutonomyLevel,
-} from './types';
+import type { Tenant, Person, Customer, Movement, Quote, FleetUnit, Driver, MemoryFact, Policy, ApprovalAction, LedgerEntry, ExchangeLoad, ExchangeCapacity, DockMessage, AutonomyLevel, Inquiry } from './types';
 
 export const DEMO_NOW = 'Tuesday, 14 May · 08:12 EAT';
 
@@ -316,6 +312,29 @@ export const movements: Movement[] = [
     progress: 0,
     flags: ['GH', 'BF'],
     quoteId: 'Q-SV-02',
+  },
+];
+
+export const inquiries: Inquiry[] = [
+  {
+    id: 'inq-1', tenantId: 'meridian', customer: 'East African Breweries', from: 'Nairobi', to: 'Mombasa',
+    cargo: 'Beer kegs — 16t', weightT: 16, channel: 'email', receivedAt: '08:12',
+    note: 'Weekly lane — needs a Friday pickup slot', status: 'new',
+  },
+  {
+    id: 'inq-2', tenantId: 'meridian', customer: 'Unga Group', from: 'Nakuru', to: 'Nairobi',
+    cargo: 'Wheat flour — 20t', weightT: 20, channel: 'whatsapp', receivedAt: '07:48',
+    note: 'Repeat customer — price-sensitive, decide today', status: 'new',
+  },
+  {
+    id: 'inq-3', tenantId: 'meridian', customer: 'Davis & Shirtliff', from: 'Nairobi', to: 'Kisumu',
+    cargo: 'Pump units — 8t', weightT: 8, channel: 'phone', receivedAt: 'Yesterday',
+    note: 'Called twice — wants a firm number', status: 'triaged',
+  },
+  {
+    id: 'inq-sv1', tenantId: 'savannah', customer: 'Melcom', from: 'Accra', to: 'Tamale',
+    cargo: 'FMCG pallets — 12t', weightT: 12, channel: 'portal', receivedAt: '06:55',
+    status: 'new',
   },
 ];
 
