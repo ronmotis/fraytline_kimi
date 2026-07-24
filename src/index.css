@@ -280,6 +280,117 @@
     --ring: 209 68% 23%;
   }
 
+  [data-theme='hmidnight'] {
+    /* ============================================================
+       DARK: "Harbor Midnight" — the Fraytline palette after dark.
+       Deep Navy canvas, Canvas off-white text, Fraytline Orange
+       action (navy on button, AA), Confirmed/Critical verbatim,
+       Operational Blue brightened for the intelligence voice.
+       ============================================================ */
+    --canvas: #071522;      --canvas-rgb: 7 21 34;
+    --surface-1: #0C2033;   --surface-1-rgb: 12 32 51;
+    --surface-2: #12293F;   --surface-2-rgb: 18 41 63;
+    --surface-3: #1C3D5A;   --surface-3-rgb: 28 61 90;
+    --glass: rgba(7, 21, 34, 0.72);
+    --line-hairline: rgba(148, 180, 209, 0.09);
+    --line-strong: rgba(148, 180, 209, 0.20);
+    --line-rgb: 148 180 209;
+    --text-1: #F4F7F9;      --text-1-rgb: 244 247 249;
+    --text-2: #A3B8C8;      --text-2-rgb: 163 184 200;
+    --text-3: #5F7A90;      --text-3-rgb: 95 122 144;
+    --ember: #FF7A1A;       --ember-rgb: 255 122 26;
+    --ember-hi: #FF8F3D;    --ember-hi-rgb: 255 143 61;
+    --ember-dim: rgba(255, 122, 26, 0.14);
+    --teal: #4F93CE;        --teal-rgb: 79 147 206;
+    --teal-dim: rgba(79, 147, 206, 0.13);
+    --warn: #E8A33D;        --warn-rgb: 232 163 61;
+    --danger: #E34F4F;      --danger-rgb: 227 79 79;
+    --ok: #17A673;          --ok-rgb: 23 166 115;
+    --quote: #6E93B5;       --quote-rgb: 110 147 181;
+    --glow-ember: rgba(255, 122, 26, 0.25);
+    --glow-teal: rgba(79, 147, 206, 0.22);
+    --glow-danger: rgba(227, 79, 79, 0.30);
+    --glow-warn: rgba(232, 163, 61, 0.40);
+    --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.55);
+    --selection: rgba(255, 122, 26, 0.28);
+
+    /* shadcn/ui compat (harbor midnight) */
+    --background: 209 65% 8%;
+    --foreground: 204 33% 97%;
+    --card: 209 62% 12%;
+    --card-foreground: 204 33% 97%;
+    --popover: 209 62% 12%;
+    --popover-foreground: 204 33% 97%;
+    --primary: 26 100% 55%;
+    --primary-foreground: 209 65% 8%;
+    --secondary: 210 55% 16%;
+    --secondary-foreground: 204 33% 97%;
+    --muted: 210 55% 16%;
+    --muted-foreground: 206 29% 71%;
+    --accent: 208 53% 24%;
+    --accent-foreground: 204 33% 97%;
+    --destructive: 0 74% 60%;
+    --destructive-foreground: 204 33% 97%;
+    --border: 204 34% 70%;
+    --input: 204 34% 70%;
+    --ring: 205 55% 59%;
+  }
+
+  [data-theme='signal'] {
+    /* ============================================================
+       DARK: "Signal Blue" — azure ops-platform register.
+       Desaturated blue-slate canvas, one electric azure action,
+       cyan intelligence. Mission-control software.
+       ============================================================ */
+    --canvas: #0F141E;      --canvas-rgb: 15 20 30;
+    --surface-1: #161D2A;   --surface-1-rgb: 22 29 42;
+    --surface-2: #1C2534;   --surface-2-rgb: 28 37 52;
+    --surface-3: #273349;   --surface-3-rgb: 39 51 73;
+    --glass: rgba(15, 20, 30, 0.74);
+    --line-hairline: rgba(157, 172, 195, 0.08);
+    --line-strong: rgba(157, 172, 195, 0.18);
+    --line-rgb: 157 172 195;
+    --text-1: #E9EEF6;      --text-1-rgb: 233 238 246;
+    --text-2: #9DACC3;      --text-2-rgb: 157 172 195;
+    --text-3: #64748C;      --text-3-rgb: 100 116 140;
+    --ember: #2F81F7;       --ember-rgb: 47 129 247;
+    --ember-hi: #1F6FEB;    --ember-hi-rgb: 31 111 235;
+    --ember-dim: rgba(47, 129, 247, 0.13);
+    --teal: #39C5F0;        --teal-rgb: 57 197 240;
+    --teal-dim: rgba(57, 197, 240, 0.12);
+    --warn: #E3B341;        --warn-rgb: 227 179 65;
+    --danger: #F85149;      --danger-rgb: 248 81 73;
+    --ok: #3FB950;          --ok-rgb: 63 185 80;
+    --quote: #8B9CF0;       --quote-rgb: 139 156 240;
+    --glow-ember: rgba(47, 129, 247, 0.25);
+    --glow-teal: rgba(57, 197, 240, 0.20);
+    --glow-danger: rgba(248, 81, 73, 0.30);
+    --glow-warn: rgba(227, 179, 65, 0.40);
+    --shadow-modal: 0 24px 80px rgba(0, 0, 0, 0.6);
+    --selection: rgba(47, 129, 247, 0.32);
+
+    /* shadcn/ui compat (signal blue) */
+    --background: 220 33% 9%;
+    --foreground: 216 33% 96%;
+    --card: 219 32% 13%;
+    --card-foreground: 216 33% 96%;
+    --popover: 219 32% 13%;
+    --popover-foreground: 216 33% 96%;
+    --primary: 215 93% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 213 30% 16%;
+    --secondary-foreground: 216 33% 96%;
+    --muted: 213 30% 16%;
+    --muted-foreground: 214 24% 69%;
+    --accent: 216 30% 22%;
+    --accent-foreground: 216 33% 96%;
+    --destructive: 3 92% 63%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 216 24% 69%;
+    --input: 216 24% 69%;
+    --ring: 194 86% 58%;
+  }
+
   * {
     border-color: var(--line-hairline);
   }
@@ -292,7 +403,9 @@
   [data-theme='harbor'] {
     color-scheme: light;
   }
-  [data-theme='noir'] {
+  [data-theme='noir'],
+  [data-theme='hmidnight'],
+  [data-theme='signal'] {
     color-scheme: dark;
   }
 
