@@ -112,6 +112,7 @@ export default function Today() {
   const movements = useTenantMovements();
   const pending = usePendingApprovals();
   const approveAction = useStore((s) => s.approveAction);
+  const canApprove = useStore((s) => s.can('approve'));
   const assignDriver = useStore((s) => s.assignDriver);
   const pushToast = useStore((s) => s.pushToast);
   const fleet = useStore((s) => s.fleet.filter((v) => v.tenantId === s.activeTenantId));
@@ -239,7 +240,7 @@ export default function Today() {
         { icon: MessageSquare, label: 'Send Melcom nudge', tone: 'ghost' as const, onClick: () => resolve('sv-q', 'Nudge sent to Melcom') },
       ]
     : [
-        ...(pending.some((a) => a.id === 'ap-bond')
+        ...(pending.some((a) => a.id === 'ap-bond') && canApprove
           ? [{ icon: FileWarning, label: 'Approve bond renewal — $180', tone: 'ember' as const, onClick: () => approveAction('ap-bond') }]
           : []),
         { icon: ArrowLeftRight, label: 'Review 2 backhaul matches', tone: 'teal' as const, onClick: () => navigate('/exchange') },
@@ -441,14 +442,17 @@ export default function Today() {
                     <span className="shrink-0 font-mono text-data text-text-3">{item.countdown}</span>
                     <button
                       onClick={() => runItem(item)}
+                      disabled={!!item.approvalId && !canApprove}
+                      title={item.approvalId && !canApprove ? 'Needs an Owner or Finance sign-in' : undefined}
                       className={cn(
                         'shrink-0 rounded-chip px-2.5 py-1 text-caption font-medium transition-colors',
                         item.primary || isDispatcher
                           ? 'bg-ember text-canvas hover:bg-ember-hi'
                           : 'border border-line-strong text-text-2 hover:text-text-1',
+                        'disabled:cursor-not-allowed disabled:opacity-40',
                       )}
                     >
-                      {item.actionLabel}
+                      {item.approvalId && !canApprove ? 'Owner only' : item.actionLabel}
                     </button>
                   </motion.div>
                 ))}
