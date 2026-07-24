@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Navigate } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, LayoutGrid, Table2, Command } from 'lucide-react';
+import { Plus, LayoutGrid, Table2, Command, Inbox, X } from 'lucide-react';
 import { useStore, useTenantQuotes, useActiveTenant, fmtMoney } from '@/store';
 import type { Movement, Quote } from '@/store';
 import DataTable from '@/components/DataTable';
@@ -9,6 +9,7 @@ import type { Column } from '@/components/DataTable';
 import ConfidenceRing from '@/components/ConfidenceRing';
 import EmptyState from '@/components/EmptyState';
 import PipelineBoard from '@/components/quotes/PipelineBoard';
+import InquiryInbox from '@/components/quotes/InquiryInbox';
 import QuoteComposer from '@/components/quotes/QuoteComposer';
 import QuoteDrawer from '@/components/quotes/QuoteDrawer';
 import LearningStrip from '@/components/quotes/LearningStrip';
@@ -25,12 +26,17 @@ export default function Quotes() {
   const movements = useStore((s) => s.movements);
   const sendQuote = useStore((s) => s.sendQuote);
   const convertQuoteToMovement = useStore((s) => s.convertQuoteToMovement);
+  const markQuoteWon = useStore((s) => s.markQuoteWon);
+  const markQuoteLost = useStore((s) => s.markQuoteLost);
+  const addInquiry = useStore((s) => s.addInquiry);
+  const customers = useStore((s) => s.customers.filter((c) => c.tenantId === s.activeTenantId));
   const teachFact = useStore((s) => s.teachFact);
   const pushToast = useStore((s) => s.pushToast);
   const laneFacts = useStore((s) => s.memoryFacts);
 
   const [view, setView] = useState<'board' | 'table'>('board');
   const [composerOpen, setComposerOpen] = useState(false);
+  const [inqModal, setInqModal] = useState(false);
   const [selected, setSelected] = useState<Quote | null>(null);
   const [overrides, setOverrides] = useState<Record<string, QuoteOverride>>({});
   const [converted, setConverted] = useState<Record<string, Movement>>({});
@@ -62,6 +68,7 @@ export default function Quotes() {
     }
     if (col === 'won') {
       setOverrides((o) => ({ ...o, [q.id]: { col } }));
+      markQuoteWon(q.id); // status + ledger in the store
       setSelected(q); // drawer opens with the convert CTA — the pipeline payoff
       pushToast({ title: `Convert ${q.id} to movement?`, body: 'one click in the drawer · hands off to Dispatch', tone: 'ok' });
       return;
@@ -77,6 +84,7 @@ export default function Quotes() {
     const q = lostPrompt;
     if (!q) return;
     setOverrides((o) => ({ ...o, [q.id]: { col: 'lost', reason } }));
+    markQuoteLost(q.id, reason); // status + ledger in the store
     const fact = q.memoryFactId ? laneFacts.find((f) => f.id === q.memoryFactId) : undefined;
     const avg = fact ? Number(fact.value) || q.price.amount : q.price.amount;
     const pct = Math.max(0, Math.round(((q.price.amount - avg) / avg) * 100));
@@ -139,6 +147,12 @@ export default function Quotes() {
             ))}
           </div>
           <button
+            onClick={() => setInqModal(true)}
+            className="flex items-center gap-2 rounded-chip border border-line-hairline px-3.5 py-2 text-small text-text-2 transition-colors hover:border-line-strong hover:text-text-1"
+          >
+            <Inbox className="h-4 w-4" /> New inquiry
+          </button>
+          <button
             onClick={() => setComposerOpen(true)}
             className="flex items-center gap-2 rounded-chip bg-ember px-3.5 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi"
           >
@@ -149,6 +163,11 @@ export default function Quotes() {
           </button>
         </div>
       </motion.div>
+
+      {/* inquiries → triage into quotes */}
+      <div className="mb-5">
+        <InquiryInbox onQuoted={(quote) => setSelected(quote)} />
+      </div>
 
       {/* pipeline */}
       {quotes.length === 0 ? (
@@ -228,6 +247,103 @@ export default function Quotes() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* new inquiry modal */}
+      {inqModal && (
+        <NewInquiryModal
+          customers={customers.map((c) => c.name)}
+          onClose={() => setInqModal(false)}
+          onSubmit={(input) => { addInquiry(input); setInqModal(false); }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ---------- New inquiry intake ----------
+
+function NewInquiryModal({
+  customers, onClose, onSubmit,
+}: {
+  customers: string[];
+  onClose: () => void;
+  onSubmit: (input: { customer: string; from: string; to: string; cargo: string; weightT: number; channel: 'email' | 'phone' | 'whatsapp' | 'portal'; note?: string }) => void;
+}) {
+  const [customer, setCustomer] = useState('');
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [weight, setWeight] = useState('');
+  const [note, setNote] = useState('');
+  const [channel, setChannel] = useState<'email' | 'phone' | 'whatsapp' | 'portal'>('email');
+  const valid = customer.trim() && from.trim() && to.trim() && cargo.trim() && Number(weight) > 0;
+
+  const field = (label: string, node: ReactNode) => (
+    <label className="block">
+      <span className="mb-1 block text-micro uppercase tracking-wide text-text-3">{label}</span>
+      {node}
+    </label>
+  );
+  const inputCls = 'w-full rounded-card border border-line-hairline bg-surface-2/60 px-3 py-2 text-small text-text-1 outline-none transition-colors placeholder:text-text-3 focus:border-teal/50';
+
+  return (
+    <div className="fixed inset-0 z-[70]">
+      <div className="absolute inset-0 bg-canvas/70 backdrop-blur-[2px]" onClick={onClose} />
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: EASE }}
+        className="absolute right-6 top-16 w-[440px] rounded-panel border border-line-hairline bg-surface-1 p-5 shadow-modal"
+      >
+        <div className="mb-1 flex items-center justify-between">
+          <div className="text-body-strong text-text-1">Log a customer inquiry</div>
+          <button onClick={onClose} className="rounded p-1 text-text-3 hover:text-text-1"><X className="h-4 w-4" /></button>
+        </div>
+        <p className="mb-4 text-caption text-text-3">From any channel — it lands in the inbox above, ready to quote.</p>
+        <div className="space-y-3">
+          {field('Customer', (
+            <>
+              <input value={customer} onChange={(e) => setCustomer(e.target.value)} placeholder="e.g. East African Breweries" list="inq-customers" className={inputCls} />
+              <datalist id="inq-customers">{customers.map((c) => <option key={c} value={c} />)}</datalist>
+            </>
+          ))}
+          <div className="grid grid-cols-2 gap-3">
+            {field('From', <input value={from} onChange={(e) => setFrom(e.target.value)} placeholder="Nairobi" className={inputCls} />)}
+            {field('To', <input value={to} onChange={(e) => setTo(e.target.value)} placeholder="Mombasa" className={inputCls} />)}
+          </div>
+          <div className="grid grid-cols-[1fr_110px] gap-3">
+            {field('Cargo', <input value={cargo} onChange={(e) => setCargo(e.target.value)} placeholder="Beer kegs" className={inputCls} />)}
+            {field('Weight (t)', <input value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="16" inputMode="decimal" className={inputCls} />)}
+          </div>
+          {field('Channel', (
+            <div className="flex gap-1.5">
+              {(['email', 'phone', 'whatsapp', 'portal'] as const).map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setChannel(c)}
+                  className={cn(
+                    'rounded-chip border px-2.5 py-1 text-caption capitalize transition-colors',
+                    channel === c ? 'border-teal/50 bg-teal-dim text-teal' : 'border-line-hairline text-text-3 hover:text-text-2',
+                  )}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          ))}
+          {field('Note (optional)', <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Needs Friday pickup" className={inputCls} />)}
+        </div>
+        <div className="mt-5 flex gap-2">
+          <button
+            disabled={!valid}
+            onClick={() => onSubmit({ customer: customer.trim(), from: from.trim(), to: to.trim(), cargo: cargo.trim(), weightT: Number(weight), channel, note: note.trim() || undefined })}
+            className="rounded-chip bg-ember px-4 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Log inquiry
+          </button>
+          <button onClick={onClose} className="rounded-chip px-3 py-2 text-small text-text-3 transition-colors hover:text-text-1">Cancel</button>
+        </div>
+      </motion.div>
     </div>
   );
 }
