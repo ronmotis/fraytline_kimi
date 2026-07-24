@@ -86,6 +86,7 @@ function bidsFor(cap: ExchangeCapacity): IncomingBid[] {
 export default function CapacityBoard() {
   const tenant = useActiveTenant();
   const postCapacity = useStore((s) => s.postCapacity);
+  const canBid = useStore((s) => s.can('bid'));
   const pushToast = useStore((s) => s.pushToast);
   const listings = useStore((s) => s.exchangeCapacity.filter((c) => c.tenantId === s.activeTenantId));
   const [dismissed, setDismissed] = useState<string[]>([]);
@@ -162,11 +163,14 @@ export default function CapacityBoard() {
                       whileTap={{ scale: 0.97 }}
                       transition={SPRING}
                       onClick={() => post(d)}
-                      className="rounded-chip bg-ember px-3 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi"
+                      disabled={!canBid}
+                      title={canBid ? undefined : 'Posting to the Exchange needs an Owner sign-in'}
+                      className="rounded-chip bg-ember px-3 py-2 text-small font-medium text-canvas transition-colors hover:bg-ember-hi disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {d.kind === 'leg' ? 'Post capacity' : 'Post availability'}
                     </motion.button>
                   )}
+                  {!isPosted && !canBid && <span className="self-center text-caption text-text-3">Owner only</span>}
                   {!isPosted && (
                     <button
                       onClick={() => dismiss(d)}

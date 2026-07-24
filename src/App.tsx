@@ -1,4 +1,3 @@
-
 import { Routes, Route, Navigate } from 'react-router'
 import Layout from './components/Layout'
 import Today from './pages/Today'
