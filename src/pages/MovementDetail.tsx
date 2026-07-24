@@ -8,7 +8,7 @@ import type { ReactNode } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowLeft, Copy, Download, MessageSquare, MoreHorizontal, Plus,
+  ArrowLeft, Copy, Download, MessageSquare, MoreHorizontal, Play, Plus,
 } from 'lucide-react';
 import { useStore, useActiveTenant, fmtMoney } from '@/store';
 import type { Movement } from '@/store';
@@ -39,6 +39,8 @@ export default function MovementDetail() {
   const approvals = useStore((s) => s.approvals);
   const fleet = useStore((s) => s.fleet);
   const pushToast = useStore((s) => s.pushToast);
+const startTrip = useStore((s) => s.startTrip);
+const canAssign = useStore((s) => s.can('assign'));
 
   const [view, setView] = useState<'full' | 'simple'>('full');
   const [railTab, setRailTab] = useState<RailTab | null>(null);
@@ -236,6 +238,22 @@ export default function MovementDetail() {
             )}
             {!portal && (
               <div className="flex items-center gap-1.5">
+                {movement.status === 'Booked' && (
+                  <button
+                    onClick={() => startTrip(movement.id)}
+                    disabled={!movement.vehiclePlate || !canAssign}
+                    title={
+                      !movement.vehiclePlate
+                        ? 'Assign a truck & driver in Dispatch first'
+                        : !canAssign
+                          ? 'Departures need an Owner or Dispatcher sign-in'
+                          : `Depart ${movement.from} now`
+                    }
+                    className="flex items-center gap-1.5 rounded-chip bg-ember px-2.5 py-1.5 text-caption font-medium text-canvas transition-colors hover:bg-ember-hi disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <Play className="h-3.5 w-3.5" /> Start trip
+                  </button>
+                )}
                 <button
                   onClick={() => pushToast({ title: `Message drafted to ${movement.driverName ?? 'driver'}`, body: 'Conductor will send inside the 07:00–21:00 window', tone: 'teal' })}
                   className="flex items-center gap-1.5 rounded-chip border border-line-strong px-2.5 py-1.5 text-caption text-text-2 transition-colors hover:text-text-1"
