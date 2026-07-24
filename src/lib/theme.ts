@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type ThemeName = 'dark' | 'light' | 'fluent' | 'noir' | 'harbor';
+export type ThemeName = 'dark' | 'light' | 'fluent' | 'noir' | 'harbor' | 'hmidnight' | 'signal';
 
 export interface ThemeMeta {
   id: ThemeName;
@@ -16,6 +16,8 @@ export interface ThemeMeta {
 export const THEMES: ThemeMeta[] = [
   { id: 'dark', label: 'Brass & Glacier', hint: 'ink-navy · brass action', swatch: '#d9a23b', mode: 'dark' },
   { id: 'noir', label: 'Noir Studio', hint: 'monochrome · white action', swatch: '#8E7CF0', mode: 'dark' },
+  { id: 'signal', label: 'Signal Blue', hint: 'azure ops platform', swatch: '#2F81F7', mode: 'dark' },
+  { id: 'hmidnight', label: 'Harbor Midnight', hint: 'your palette, after dark', swatch: 'linear-gradient(135deg,#0C2033 55%,#FF7A1A 55%)', mode: 'dark' },
   { id: 'light', label: 'Flagship Light', hint: 'crisp white · coral action', swatch: '#E04A2F', mode: 'light' },
   { id: 'fluent', label: 'Fluent Ops', hint: 'Microsoft enterprise blue', swatch: '#0F6CBD', mode: 'light' },
   { id: 'harbor', label: 'Harbor Ops', hint: 'Fraytline orange · navy', swatch: '#FF7A1A', mode: 'light' },
