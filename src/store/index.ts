@@ -6,7 +6,7 @@ import type {
   ApprovalAction, AutonomyLevel, Currency, DockMessage, Driver, ExchangeCapacity,
   ExchangeLoad, FleetUnit, IntentResult, LedgerEntry, MemoryFact, Money, Movement,
   Person, Policy, PolicyCheck, PriceSuggestion, FitResult, Quote, Role, Tenant, Toast,
-  Customer, FactKind,
+  Customer, FactKind, Capability, Inquiry,
 } from './types';
 import * as seed from './seed';
 
@@ -28,13 +28,38 @@ export const fmtMoney = (m: Money) =>
 
 export const ownerName = (tenantId: string) => (tenantId === 'savannah' ? 'Kwabena' : 'Wanjiru');
 
+/** name of the signed-in person (falls back to the tenant owner for legacy flows) */
+const sessionName = (people: { id: string; name: string }[], sessionUserId: string | null, tenantId: string) => {
+  const p = people.find((pp) => pp.id === sessionUserId);
+  return p ? p.name.split(' ')[0] : ownerName(tenantId);
+};
+
 export function forTenant<T extends { tenantId: string }>(items: T[], tenantId: string): T[] {
   return items.filter((i) => i.tenantId === tenantId);
 }
 
 const laneKey = (from: string, to: string) => `${from}→${to}`.toLowerCase().replace(/\s+/g, '');
 
-const laneLabel = (from: string, to: string) => `${from}→${to}`;
+export const laneLabel = (from: string, to: string) => `${from}→${to}`;
+
+// ---------- role → capability map (Identity slice) ----------
+
+export const ROLE_CAPS: Record<Role, Capability[]> = {
+  Owner: ['approve', 'assign', 'bid', 'settle', 'admin', 'audit.undo'],
+  Dispatcher: ['assign'],
+  Finance: ['approve', 'settle'],
+  Driver: [],
+  Customer: [],
+};
+
+/** what each role is locked out of, for UI hints */
+export const ROLE_LOCKS: Record<Role, string> = {
+  Owner: '',
+  Dispatcher: 'Governance approvals, bidding and finance actions need an Owner or Finance sign-in.',
+  Finance: 'Dispatch assignment and administration need an Owner sign-in.',
+  Driver: 'Drivers see their manifest only.',
+  Customer: 'Customers track their own movement only.',
+};
 
 // ---------- store shape ----------
 
@@ -42,6 +67,7 @@ export interface StoreState {
   // session
   activeTenantId: string;
   role: Role;
+  sessionUserId: string | null;
   roleBannerDismissed: boolean;
   commandBarOpen: boolean;
   dockOpen: boolean;
@@ -57,6 +83,7 @@ export interface StoreState {
   drivers: Driver[];
   movements: Movement[];
   quotes: Quote[];
+  inquiries: Inquiry[];
   memoryFacts: MemoryFact[];
   policies: Policy[];
   approvals: ApprovalAction[];
@@ -66,6 +93,9 @@ export interface StoreState {
   dockMessages: DockMessage[];
 
   // session actions
+  signIn: (personId: string) => void;
+  signOut: () => void;
+  can: (cap: Capability) => boolean;
   switchTenant: (tenantId: string) => void;
   switchRole: (role: Role) => void;
   dismissRoleBanner: () => void;
@@ -104,7 +134,13 @@ export interface StoreState {
   // mutations page agents use
   addQuoteFromIntent: (draft: { from: string; to: string; weightT: number; customer?: string; cargo: string; pickupDate?: string }, suggestion: PriceSuggestion | null) => Quote;
   convertQuoteToMovement: (quoteId: string) => Movement | undefined;
+  addInquiry: (input: { customer: string; from: string; to: string; cargo: string; weightT: number; channel: Inquiry['channel']; note?: string }) => Inquiry;
+  closeInquiry: (inquiryId: string) => void;
+  quoteFromInquiry: (inquiryId: string) => Quote | undefined;
+  markQuoteWon: (quoteId: string) => void;
+  markQuoteLost: (quoteId: string, reason: string) => void;
   assignDriver: (movementId: string, vehicleId: string) => void;
+  startTrip: (movementId: string) => void;
   sendQuote: (quoteId: string) => void;
   postCapacity: (input: { from: string; to: string; date: string; vehiclePlate: string }) => ExchangeCapacity;
   placeBid: (loadId: string, amount: number) => PolicyCheck;
@@ -141,9 +177,19 @@ const baseStore = create<StoreState>()((set, get) => {
       tone: 'teal',
     });
 
+  // hydrate identity from the persisted session (role/tenant follow the person, not defaults)
+  const initSession = (() => {
+    try {
+      const id = localStorage.getItem('fraytline-session');
+      const p = seed.people.find((pp) => pp.id === id);
+      if (p) return { id: p.id, tenantId: p.tenantId, role: (p.role === 'Partner' ? 'Dispatcher' : p.role) as Role };
+    } catch { /* ignore */ }
+    return { id: null as string | null, tenantId: 'meridian', role: 'Owner' as Role };
+  })();
+
   return {
-    activeTenantId: 'meridian',
-    role: 'Owner',
+    activeTenantId: initSession.tenantId,
+    role: initSession.role,
     roleBannerDismissed: false,
     commandBarOpen: false,
     dockOpen: true,
@@ -158,6 +204,7 @@ const baseStore = create<StoreState>()((set, get) => {
     drivers: seed.drivers,
     movements: seed.movements,
     quotes: seed.quotes,
+    inquiries: seed.inquiries,
     memoryFacts: seed.memoryFacts,
     policies: seed.policies,
     approvals: seed.approvals,
@@ -167,6 +214,37 @@ const baseStore = create<StoreState>()((set, get) => {
     dockMessages: seed.dockMessages,
 
     // ----- session -----
+    sessionUserId: initSession.id,
+
+    signIn: (personId) => {
+      const person = get().people.find((p) => p.id === personId);
+      if (!person) return;
+      const role: Role = person.role === 'Partner' ? 'Dispatcher' : person.role;
+      try { localStorage.setItem('fraytline-session', personId); } catch { /* ignore */ }
+      set({ sessionUserId: personId, activeTenantId: person.tenantId, role, roleBannerDismissed: role === 'Owner' });
+      writeLedger({
+        tenantId: person.tenantId, actor: 'user', actorName: person.name,
+        action: `Signed in · ${person.name} (${role})`, verdict: 'auto',
+        verdictLabel: 'session started', reversible: false,
+      });
+    },
+
+    signOut: () => {
+      const s = get();
+      const person = s.people.find((p) => p.id === s.sessionUserId);
+      try { localStorage.removeItem('fraytline-session'); } catch { /* ignore */ }
+      if (person) {
+        writeLedger({
+          tenantId: person.tenantId, actor: 'user', actorName: person.name,
+          action: `Signed out · ${person.name}`, verdict: 'auto',
+          verdictLabel: 'session ended', reversible: false,
+        });
+      }
+      set({ sessionUserId: null });
+    },
+
+    can: (cap) => ROLE_CAPS[get().role].includes(cap),
+
     switchTenant: (tenantId) => {
       const tenant = get().tenants.find((t) => t.id === tenantId);
       if (!tenant || tenantId === get().activeTenantId) return;
@@ -320,6 +398,10 @@ const baseStore = create<StoreState>()((set, get) => {
 
     approveAction: (actionId) => {
       const s = get();
+      if (!s.can('approve')) {
+        get().pushToast({ title: 'Not permitted', body: 'Approvals need an Owner or Finance sign-in', tone: 'danger' });
+        return;
+      }
       const action = s.approvals.find((a) => a.id === actionId);
       if (!action || action.status !== 'pending') return;
       const owner = ownerName(action.tenantId);
@@ -589,6 +671,94 @@ const baseStore = create<StoreState>()((set, get) => {
       return movement;
     },
 
+    addInquiry: (input) => {
+      const s = get();
+      const tenantId = s.activeTenantId;
+      const inq: Inquiry = {
+        id: uid('inq'), tenantId, customer: input.customer, from: input.from, to: input.to,
+        cargo: input.cargo, weightT: input.weightT, channel: input.channel, note: input.note,
+        receivedAt: nowTime(), status: 'new',
+      };
+      set((st) => ({ inquiries: [inq, ...st.inquiries] }));
+      writeLedger({
+        tenantId, actor: 'user', actorName: sessionName(s.people, s.sessionUserId, tenantId),
+        action: `Inquiry logged · ${inq.customer} ${laneLabel(inq.from, inq.to)} ${inq.weightT}t (${inq.channel})`,
+        verdict: 'approved', verdictLabel: `received by ${ownerName(tenantId)}`, reversible: false,
+      }, { title: `Inquiry from ${inq.customer}`, body: `${laneLabel(inq.from, inq.to)} · ${inq.weightT}t · triage in Quotes`, tone: 'teal' });
+      return inq;
+    },
+
+    closeInquiry: (inquiryId) => {
+      const s = get();
+      const inq = s.inquiries.find((i) => i.id === inquiryId);
+      if (!inq) return;
+      set((st) => ({ inquiries: st.inquiries.map((i) => (i.id === inquiryId ? { ...i, status: 'closed' } : i)) }));
+      writeLedger({
+        tenantId: inq.tenantId, actor: 'user', actorName: sessionName(s.people, s.sessionUserId, inq.tenantId),
+        action: `Closed inquiry from ${inq.customer} (${laneLabel(inq.from, inq.to)})`,
+        verdict: 'approved', verdictLabel: 'closed · no quote', reversible: false,
+      });
+    },
+
+    quoteFromInquiry: (inquiryId) => {
+      const s = get();
+      const inq = s.inquiries.find((i) => i.id === inquiryId);
+      if (!inq || inq.status === 'quoted') return undefined;
+      const tenantId = inq.tenantId;
+      const currency: Currency = tenantId === 'savannah' ? 'GHS' : 'USD';
+      const suggestion = s.suggestPrice({ from: inq.from, to: inq.to }, inq.cargo);
+      const price = suggestion?.price ?? { amount: Math.round(inq.weightT * 68), currency };
+      const cost = { amount: Math.round(price.amount * 0.82), currency };
+      const marginPct = Math.round(((price.amount - cost.amount) / price.amount) * 100);
+      const quote: Quote = {
+        id: tenantId === 'savannah'
+          ? `Q-SV-${3 + s.quotes.filter((q) => q.tenantId === 'savannah').length}`
+          : `Q-${313 + s.quotes.filter((q) => q.tenantId === 'meridian').length}`,
+        tenantId, customer: inq.customer, from: inq.from, to: inq.to,
+        cargo: inq.cargo, weightT: inq.weightT,
+        price, cost, marginPct,
+        status: 'draft', openCount: 0,
+        confidence: suggestion?.confidence ?? 45, memoryFactId: suggestion?.factId,
+        winProbability: suggestion && suggestion.confidence > 60 ? 68 : 42,
+        createdBy: 'user', lastActivity: `drafted from ${inq.channel} inquiry`,
+      };
+      set((st) => ({
+        quotes: [quote, ...st.quotes],
+        inquiries: st.inquiries.map((i) => (i.id === inquiryId ? { ...i, status: 'quoted', quoteId: quote.id } : i)),
+      }));
+      writeLedger({
+        tenantId, actor: 'user', actorName: sessionName(s.people, s.sessionUserId, tenantId),
+        action: `Drafted ${quote.id} from ${inq.customer} inquiry · ${laneLabel(inq.from, inq.to)} ${fmtMoney(price)}`,
+        verdict: 'approved', verdictLabel: `drafted by ${sessionName(s.people, s.sessionUserId, tenantId)}`, confidence: quote.confidence,
+        reversible: false, reasoning: suggestion ? [suggestion.reasoning] : undefined,
+      }, { title: `${quote.id} drafted from inquiry`, body: `${inq.customer} · ${fmtMoney(price)} · review and send`, tone: 'ok' });
+      return quote;
+    },
+
+    markQuoteWon: (quoteId) => {
+      const s = get();
+      const q = s.quotes.find((x) => x.id === quoteId);
+      if (!q || q.status === 'won') return;
+      set((st) => ({ quotes: st.quotes.map((x) => (x.id === quoteId ? { ...x, status: 'won', lastActivity: 'marked won' } : x)) }));
+      writeLedger({
+        tenantId: q.tenantId, actor: 'user', actorName: sessionName(s.people, s.sessionUserId, q.tenantId),
+        action: `${q.id} won · ${q.customer} ${laneLabel(q.from, q.to)} ${fmtMoney(q.price)}`,
+        verdict: 'approved', verdictLabel: `won by ${sessionName(s.people, s.sessionUserId, q.tenantId)}`, reversible: false,
+      });
+    },
+
+    markQuoteLost: (quoteId, reason) => {
+      const s = get();
+      const q = s.quotes.find((x) => x.id === quoteId);
+      if (!q || q.status === 'lost') return;
+      set((st) => ({ quotes: st.quotes.map((x) => (x.id === quoteId ? { ...x, status: 'lost', lastActivity: `lost · ${reason}` } : x)) }));
+      writeLedger({
+        tenantId: q.tenantId, actor: 'user', actorName: sessionName(s.people, s.sessionUserId, q.tenantId),
+        action: `${q.id} lost · ${q.customer} ${laneLabel(q.from, q.to)} — ${reason}`,
+        verdict: 'approved', verdictLabel: `lost · ${reason}`, reversible: false,
+      }, { title: `${q.id} marked lost`, body: reason, tone: 'ember' });
+    },
+
     assignDriver: (movementId, vehicleId) => {
       const s = get();
       const vehicle = s.fleet.find((v) => v.id === vehicleId);
@@ -615,6 +785,46 @@ const baseStore = create<StoreState>()((set, get) => {
         verdict: 'approved', verdictLabel: `assigned by ${ownerName(movement.tenantId)}`, reversible: false,
         reasoning: [`${vehicle.model} compatible with ${movement.weightT}t ${movement.cargo}`, 'Hours-of-service clear'],
       }, { title: `${vehicle.plate} → ${movementId}`, tone: 'ok' });
+    },
+
+    startTrip: (movementId) => {
+      const s = get();
+      const m = s.movements.find((x) => x.id === movementId);
+      if (!m || m.status !== 'Booked') return;
+      if (!m.vehiclePlate) {
+        get().pushToast({ title: 'No vehicle assigned', body: 'Assign a truck & driver in Dispatch first', tone: 'ember' });
+        return;
+      }
+      if (!s.can('assign')) {
+        get().pushToast({ title: 'Not permitted', body: 'Departures need an Owner or Dispatcher sign-in', tone: 'danger' });
+        return;
+      }
+      const name = sessionName(s.people, s.sessionUserId, m.tenantId);
+      set((st) => ({
+        movements: st.movements.map((x) =>
+          x.id === movementId
+            ? {
+                ...x,
+                status: 'In Transit',
+                progress: 0.05,
+                pickupIn: undefined,
+                nextMilestone: x.milestones[1]?.label ?? `Deliver ${x.to}`,
+                nextMilestoneInH: x.milestones[1] ? x.nextMilestoneInH : undefined,
+                milestones: x.milestones.map((ms, i) =>
+                  i === 0 ? { ...ms, label: ms.label.startsWith('Pickup') ? ms.label.replace('Pickup', 'Departed') : ms.label, time: nowTime(), status: 'done' }
+                    : i === 1 ? { ...ms, status: 'current' } : ms,
+                ),
+              }
+            : x,
+        ),
+        drivers: st.drivers.map((d) => (d.name === m.driverName ? { ...d, status: 'driving' } : d)),
+      }));
+      writeLedger({
+        tenantId: m.tenantId, actor: 'user', actorName: name,
+        action: `Departed ${m.from} · ${movementId} · ${m.vehiclePlate}${m.driverName ? ` · ${m.driverName}` : ''}`,
+        verdict: 'approved', verdictLabel: `departed · logged by ${name}`, reversible: false,
+        reasoning: ['Pre-trip inspection logged', `${m.docs.filter((d) => d.status === 'verified').length}/${m.docs.length} docs verified on board`, 'Hours-of-service clear'],
+      }, { title: `${movementId} departed ${m.from}`, body: `${m.vehiclePlate} · next: ${m.milestones[1]?.label ?? m.to}`, tone: 'ok' });
     },
 
     sendQuote: (quoteId) => {
@@ -686,6 +896,18 @@ const baseStore = create<StoreState>()((set, get) => {
     tick: () => {
       const s = get();
       set({ tickCount: s.tickCount + 1 });
+      // simulate customer engagement: the oldest 'sent' quote gets opened
+      const sent = s.quotes.filter((q) => q.status === 'sent');
+      if (sent.length > 0) {
+        const q = sent[sent.length - 1];
+        set((st) => ({
+          quotes: st.quotes.map((x) =>
+            x.id === q.id
+              ? { ...x, status: 'opened', openCount: x.openCount + 1, lastActivity: `Opened ${x.openCount + 1}x · tracking` }
+              : x,
+          ),
+        }));
+      }
       const tenantId = s.activeTenantId;
       if (tenantId !== 'meridian') return;
       const hasPrediction = s.dockMessages.some((m) => m.id === 'dm-tick-malaba');
@@ -732,6 +954,8 @@ export const useTenantFleet = () =>
 
 export const useTenantQuotes = () =>
   useStore((s) => s.quotes.filter((q) => q.tenantId === s.activeTenantId));
+export const useTenantInquiries = () =>
+  useStore((s) => s.inquiries.filter((i) => i.tenantId === s.activeTenantId));
 
 export const useTenantLedger = () =>
   useStore((s) => s.ledger.filter((e) => e.tenantId === s.activeTenantId));
