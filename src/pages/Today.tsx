@@ -39,19 +39,15 @@ interface Stat {
   delta?: { label: string; tone: 'ok' | 'danger' | 'warn' | 'teal' };
   factId?: string;
   to?: string;
-  spark?: number[];
 }
 
 function StatTile({ stat, index }: { stat: Stat; index: number }) {
-  const [hover, setHover] = useState(false);
   const navigate = useNavigate();
   return (
     <motion.button
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 + index * 0.08, duration: 0.4, ease: EASE }}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       onClick={() => stat.to && navigate(stat.to)}
       className="relative rounded-card border border-line-hairline bg-surface-1 p-5 text-left transition-colors duration-150 hover:border-line-strong"
     >
@@ -80,16 +76,6 @@ function StatTile({ stat, index }: { stat: Stat; index: number }) {
         )}
         {stat.factId && <MemoryChip factId={stat.factId} />}
       </motion.div>
-      {/* sparkline on hover */}
-      {stat.spark && hover && (
-        <svg viewBox="0 0 100 28" className="absolute bottom-3 right-4 h-7 w-24">
-          <motion.polyline
-            points={stat.spark.map((v, i) => `${i * 25},${26 - v * 24}`).join(' ')}
-            fill="none" stroke="var(--teal)" strokeWidth="1.5"
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.4 }}
-          />
-        </svg>
-      )}
     </motion.button>
   );
 }
@@ -144,7 +130,6 @@ export default function Today() {
 
   const [resolved, setResolved] = useState<string[]>([]);
   const [sortMode, setSortMode] = useState<'severity' | 'time'>('severity');
-  const [filter, setFilter] = useState<string | null>(null);
   const [layers, setLayers] = useState({ routes: true, vehicles: true, borders: true, weather: false });
   const [drawerMovement, setDrawerMovement] = useState<string | null>(null);
 
@@ -198,7 +183,6 @@ export default function Today() {
   const visibleItems = attentionItems
     .filter((i) => !resolved.includes(i.id))
     .filter((i) => (i.approvalId ? pending.some((a) => a.id === i.approvalId) : true))
-    .filter((i) => !filter || i.category === filter)
     .sort((a, b) => (sortMode === 'severity' ? SEV_ORDER[a.severity] - SEV_ORDER[b.severity] : a.hours - b.hours));
 
   const runItem = (item: AttentionItem) => {
@@ -269,34 +253,34 @@ export default function Today() {
   const stats: Stat[] = useMemo(() => {
     if (isSavannah) {
       return [
-        { label: 'Margin this week', value: 18240, format: ghs, delta: { label: '+6%', tone: 'ok' }, to: '/movements', spark: [0.3, 0.45, 0.4, 0.7, 0.9] },
-        { label: 'Cash in transit', value: 9800, format: ghs, delta: { label: 'advances GH₵1,800', tone: 'teal' }, to: '/movements', spark: [0.5, 0.4, 0.6, 0.55, 0.8] },
-        { label: 'On-time (30d)', value: 96.1, format: (v) => `${v.toFixed(1)}%`, factId: 'f-customer-melcom', spark: [0.7, 0.75, 0.8, 0.85, 0.95] },
-        { label: 'Active exceptions', value: 0, format: (v) => `${Math.round(v)}`, delta: { label: 'calm', tone: 'ok' }, spark: [0.2, 0.1, 0.1, 0, 0] },
+        { label: 'Margin this week', value: 18240, format: ghs, delta: { label: '+6%', tone: 'ok' }, to: '/movements' },
+        { label: 'Cash in transit', value: 9800, format: ghs, delta: { label: 'advances GH₵1,800', tone: 'teal' }, to: '/movements' },
+        { label: 'On-time (30d)', value: 96.1, format: (v) => `${v.toFixed(1)}%`, factId: 'f-customer-melcom' },
+        { label: 'Active exceptions', value: 0, format: (v) => `${Math.round(v)}`, delta: { label: 'calm', tone: 'ok' } },
       ];
     }
     const exceptions = movements.filter((m) => m.exceptionNote && m.status !== 'Draft').length;
     if (role === 'Dispatcher') {
       return [
-        { label: 'Unassigned', value: movements.filter((m) => m.status === 'Booked' && !m.vehiclePlate).length, format: (v) => `${Math.round(v)}`, delta: { label: 'pickup 26h', tone: 'warn' }, to: '/dispatch', spark: [0.8, 0.6, 0.5, 0.4, 0.3] },
-        { label: 'Border wait now', value: 5.5, format: (v) => `${v.toFixed(1)}h`, delta: { label: 'trending down', tone: 'ok' }, to: '/movements', spark: [0.9, 0.8, 0.7, 0.6, 0.45] },
-        { label: 'On-time (30d)', value: 94.2, format: (v) => `${v.toFixed(1)}%`, spark: [0.6, 0.7, 0.72, 0.8, 0.9] },
-        { label: 'Active exceptions', value: exceptions, format: (v) => `${Math.round(v)}`, delta: { label: 'bond 36h', tone: 'danger' }, to: '/actions', spark: [0.2, 0.3, 0.5, 0.5, 0.6] },
+        { label: 'Unassigned', value: movements.filter((m) => m.status === 'Booked' && !m.vehiclePlate).length, format: (v) => `${Math.round(v)}`, delta: { label: 'pickup 26h', tone: 'warn' }, to: '/dispatch' },
+        { label: 'Border wait now', value: 5.5, format: (v) => `${v.toFixed(1)}h`, delta: { label: 'trending down', tone: 'ok' }, to: '/movements' },
+        { label: 'On-time (30d)', value: 94.2, format: (v) => `${v.toFixed(1)}%` },
+        { label: 'Active exceptions', value: exceptions, format: (v) => `${Math.round(v)}`, delta: { label: 'bond 36h', tone: 'danger' }, to: '/actions' },
       ];
     }
     if (role === 'Finance') {
       return [
-        { label: 'Receivables aging >30d', value: 3120, format: usd, delta: { label: '2 invoices', tone: 'warn' }, to: '/movements', spark: [0.4, 0.5, 0.45, 0.6, 0.55] },
-        { label: 'Settlements pending', value: 3, format: (v) => `${Math.round(v)}`, delta: { label: '$1,850 next', tone: 'teal' }, to: '/movements', spark: [0.3, 0.4, 0.35, 0.5, 0.45] },
-        { label: 'Cash in transit', value: 9240, format: usd, delta: { label: 'advances out $480', tone: 'teal' }, spark: [0.5, 0.55, 0.6, 0.5, 0.7] },
-        { label: 'Margin this week', value: 12480, format: usd, delta: { label: '+8%', tone: 'ok' }, spark: [0.3, 0.5, 0.45, 0.7, 0.9] },
+        { label: 'Receivables aging >30d', value: 3120, format: usd, delta: { label: '2 invoices', tone: 'warn' }, to: '/movements' },
+        { label: 'Settlements pending', value: 3, format: (v) => `${Math.round(v)}`, delta: { label: '$1,850 next', tone: 'teal' }, to: '/movements' },
+        { label: 'Cash in transit', value: 9240, format: usd, delta: { label: 'advances out $480', tone: 'teal' } },
+        { label: 'Margin this week', value: 12480, format: usd, delta: { label: '+8%', tone: 'ok' } },
       ];
     }
     return [
-      { label: 'Margin this week', value: 12480, format: usd, delta: { label: '+8%', tone: 'ok' }, to: '/movements', spark: [0.3, 0.5, 0.45, 0.7, 0.9] },
-      { label: 'Cash in transit', value: 9240, format: usd, delta: { label: 'advances out $480', tone: 'teal' }, to: '/movements', spark: [0.5, 0.55, 0.6, 0.5, 0.7] },
-      { label: 'On-time (30d)', value: 94.2, format: (v) => `${v.toFixed(1)}%`, factId: undefined, spark: [0.6, 0.7, 0.72, 0.8, 0.9] },
-      { label: 'Active exceptions', value: exceptions, format: (v) => `${Math.round(v)}`, delta: { label: exceptions > 0 ? 'bond 36h' : 'calm', tone: exceptions > 0 ? 'danger' : 'ok' }, to: '/actions', spark: [0.2, 0.3, 0.5, 0.5, 0.6] },
+      { label: 'Margin this week', value: 12480, format: usd, delta: { label: '+8%', tone: 'ok' }, to: '/movements' },
+      { label: 'Cash in transit', value: 9240, format: usd, delta: { label: 'advances out $480', tone: 'teal' }, to: '/movements' },
+      { label: 'On-time (30d)', value: 94.2, format: (v) => `${v.toFixed(1)}%`, factId: undefined },
+      { label: 'Active exceptions', value: exceptions, format: (v) => `${Math.round(v)}`, delta: { label: exceptions > 0 ? 'bond 36h' : 'calm', tone: exceptions > 0 ? 'danger' : 'ok' }, to: '/actions' },
     ];
   }, [isSavannah, role, movements]);
 
@@ -321,8 +305,14 @@ export default function Today() {
       ];
 
   const liveCount = movements.filter((m) => ['In Transit', 'At Border', 'Booked'].includes(m.status)).length;
-  const bordersInPlay = movements.reduce((n, m) => n + m.borders.filter((b) => b.status !== 'cleared').length, 0);
-  const todaysMovements = movements.filter((m) => m.status !== 'Settled').slice(0, 4);
+  const todaysMovements = movements.filter((m) => m.status !== 'Settled');
+  const kanbanColumns = useMemo(() => {
+    const order = ['Draft', 'Quoted', 'Booked', 'In Transit', 'At Border', 'Exception', 'Delivered'];
+    return order
+      .map((s) => ({ status: s, items: todaysMovements.filter((m) => m.status === s) }))
+      .filter((c) => c.items.length > 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [movements]);
   const drawerM = movements.find((m) => m.id === drawerMovement);
 
   const section = (i: number, children: React.ReactNode, extraDelay = 0, className?: string) => (
@@ -362,27 +352,6 @@ export default function Today() {
               Tuesday, 14 May · {tenant.name} · {tenant.branch}
             </p>
           </div>
-          <div className="flex gap-2">
-            {[
-              { label: `${liveCount} movements active`, f: 'movements' },
-              ...(isSavannah ? [] : [{ label: `${bordersInPlay} borders in play`, f: 'borders' }]),
-              { label: `${pending.length} approvals waiting`, f: 'approvals' },
-            ].map((chip, i) => (
-              <motion.button
-                key={chip.label}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.4 + i * 0.06, type: 'spring', stiffness: 380, damping: 30 }}
-                onClick={() => setFilter(filter === chip.f ? null : chip.f)}
-                className={cn(
-                  'rounded-full border px-3 py-1.5 text-caption transition-colors',
-                  filter === chip.f ? 'border-teal bg-teal-dim text-teal' : 'border-line-hairline text-text-2 hover:border-line-strong',
-                )}
-              >
-                {chip.label}
-              </motion.button>
-            ))}
-          </div>
         </div>
       ))}
 
@@ -396,9 +365,47 @@ export default function Today() {
         />
       ))}
 
-      {/* Sections 3 + 4 — Attention queue & pulse stats */}
-      <div className={cn('grid grid-cols-1 gap-6', !isDispatcher && 'xl:grid-cols-12')}>
-        {section(2, (
+      {/* Section 3 — KPI strip (replaces the old header chips; no sparklines) */}
+      {section(2, (
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {stats.map((s, i) => <StatTile key={s.label} stat={s} index={i} />)}
+        </div>
+      ))}
+
+      {/* Sections 4 + 5 — Live ops map & needs attention */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-12">
+        {section(3, (
+          <div>
+            <div className="mb-3 flex items-center gap-3">
+              <h2 className="font-display text-h2 text-text-1">Live operations</h2>
+              <div className="ml-auto flex gap-1.5">
+                {(['routes', 'vehicles', 'borders', 'weather'] as const).map((l) => (
+                  <button
+                    key={l}
+                    onClick={() => setLayers((s) => ({ ...s, [l]: !s[l] }))}
+                    className={cn(
+                      'rounded-chip border px-2 py-0.5 text-micro uppercase transition-colors',
+                      layers[l] ? 'border-teal/40 bg-teal-dim text-teal' : 'border-line-hairline text-text-3 hover:text-text-2',
+                    )}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <LiveMap
+              mapAsset={tenant.mapAsset}
+              routes={layers.routes ? routes : []}
+              vehicles={layers.vehicles ? fleet : []}
+              borders={layers.borders ? borderNodes : []}
+              height={isFinance ? 120 : 420}
+              weather={layers.weather && !isSavannah ? { coords: [600, 400], radius: 110, caption: 'Rain near Busia — expect +2h after 15:00' } : undefined}
+              onRouteClick={(r) => r.movementId && setDrawerMovement(r.movementId)}
+            />
+          </div>
+        ), 0.2, 'xl:col-span-7')}
+
+        {section(4, (
           <div className="h-full rounded-panel border border-line-hairline bg-surface-1 p-5">
             <div className="mb-4 flex items-center gap-3">
               <h2 className="font-display text-h2 text-text-1">Needs attention</h2>
@@ -415,7 +422,7 @@ export default function Today() {
                 ))}
               </div>
             </div>
-            <div className="space-y-1.5" key={`${filter}-${sortMode}`} id="attention-queue">
+            <div className="space-y-1.5" key={sortMode} id="attention-queue">
               <AnimatePresence initial={false}>
                 {visibleItems.map((item, i) => (
                   <motion.div
@@ -451,75 +458,42 @@ export default function Today() {
               )}
             </div>
           </div>
-        ), 0, !isDispatcher ? 'xl:col-span-7' : undefined)}
-
-        {section(3, isDispatcher ? (
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            {stats.map((s, i) => <StatTile key={s.label} stat={s} index={i} />)}
-          </div>
-        ) : (
-          <div className="grid h-full grid-cols-2 gap-3 xl:grid-cols-1 2xl:grid-cols-2">
-            {stats.map((s, i) => <StatTile key={s.label} stat={s} index={i} />)}
-          </div>
-        ), 0, !isDispatcher ? 'xl:col-span-5' : undefined)}
+        ), 0, 'xl:col-span-5')}
       </div>
 
-      {/* Sections 5 + 6 — Live ops map & today's movements */}
-      <div className={cn('grid grid-cols-1 gap-6', !isFinance && 'xl:grid-cols-12')}>
-        {section(4, (
-          <div>
-            <div className="mb-3 flex items-center gap-3">
-              <h2 className="font-display text-h2 text-text-1">Live operations</h2>
-              <div className="ml-auto flex gap-1.5">
-                {(['routes', 'vehicles', 'borders', 'weather'] as const).map((l) => (
-                  <button
-                    key={l}
-                    onClick={() => setLayers((s) => ({ ...s, [l]: !s[l] }))}
-                    className={cn(
-                      'rounded-chip border px-2 py-0.5 text-micro uppercase transition-colors',
-                      layers[l] ? 'border-teal/40 bg-teal-dim text-teal' : 'border-line-hairline text-text-3 hover:text-text-2',
-                    )}
-                  >
-                    {l}
-                  </button>
-                ))}
+      {/* Section 6 — Today's movements as a kanban board, below the map */}
+      {section(5, (
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="font-display text-h2 text-text-1">Today’s movements</h2>
+            <button onClick={() => navigate('/movements')} className="flex items-center gap-1 text-caption text-teal hover:text-text-1">
+              view all <ArrowRight className="h-3 w-3" />
+            </button>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {kanbanColumns.map((col, ci) => (
+              <div key={col.status} className="w-[280px] shrink-0">
+                <div className="mb-2 flex items-center gap-2 px-1">
+                  <span className="text-micro uppercase tracking-wide text-text-3">{col.status}</span>
+                  <span className="rounded-full bg-surface-3 px-2 py-0.5 font-mono text-[10px] text-text-2">{col.items.length}</span>
+                </div>
+                <div className="space-y-3">
+                  {col.items.map((m, i) => (
+                    <motion.div
+                      key={m.id}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 + (ci + i) * 0.06, duration: 0.4, ease: EASE }}
+                    >
+                      <MovementCard movement={m} />
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <LiveMap
-              mapAsset={tenant.mapAsset}
-              routes={layers.routes ? routes : []}
-              vehicles={layers.vehicles ? fleet : []}
-              borders={layers.borders ? borderNodes : []}
-              height={isFinance ? 120 : 420}
-              weather={layers.weather && !isSavannah ? { coords: [600, 400], radius: 110, caption: 'Rain near Busia — expect +2h after 15:00' } : undefined}
-              onRouteClick={(r) => r.movementId && setDrawerMovement(r.movementId)}
-            />
+            ))}
           </div>
-        ), 0.2, !isFinance ? 'xl:col-span-7' : undefined)}
-
-        {section(5, (
-          <div>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-display text-h2 text-text-1">Today’s movements</h2>
-              <button onClick={() => navigate('/movements')} className="flex items-center gap-1 text-caption text-teal hover:text-text-1">
-                view all <ArrowRight className="h-3 w-3" />
-              </button>
-            </div>
-            <div className="space-y-3">
-              {todaysMovements.map((m, i) => (
-                <motion.div
-                  key={m.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 + i * 0.07, duration: 0.4, ease: EASE }}
-                >
-                  <MovementCard movement={m} />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        ), 0, !isFinance ? 'xl:col-span-5' : undefined)}
-      </div>
+        </div>
+      ))}
 
       {/* movement drawer (map route click) */}
       <AnimatePresence>
