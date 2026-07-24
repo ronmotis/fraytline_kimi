@@ -1,3 +1,4 @@
+
 import { Routes, Route, Navigate } from 'react-router'
 import Layout from './components/Layout'
 import Today from './pages/Today'
@@ -11,12 +12,15 @@ import Exchange from './pages/Exchange'
 import Network from './pages/Network'
 import Settings from './pages/Settings'
 import Onboarding from './pages/Onboarding'
+import Login from './pages/Login'
+import Audit from './pages/Audit'
 
 export default function App() {
   return (
     <Routes>
       {/* chrome-less genesis flow */}
       <Route path="/onboarding" element={<Onboarding />} />
+      <Route path="/login" element={<Login />} />
       {/* app shell */}
       <Route element={<Layout />}>
         <Route index element={<Navigate to="/today" replace />} />
@@ -27,6 +31,7 @@ export default function App() {
         <Route path="/dispatch" element={<Dispatch />} />
         <Route path="/memory" element={<Memory />} />
         <Route path="/actions" element={<Actions />} />
+        <Route path="/audit" element={<Audit />} />
         <Route path="/exchange" element={<Exchange />} />
         <Route path="/network" element={<Network />} />
         <Route path="/settings" element={<Settings />} />
