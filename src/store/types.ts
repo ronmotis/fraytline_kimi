@@ -99,6 +99,23 @@ export interface Movement {
   pickupIn?: string; // human countdown label e.g. '26h'
 }
 
+export type InquiryStatus = 'new' | 'triaged' | 'quoted' | 'closed';
+
+export interface Inquiry {
+  id: string;
+  tenantId: string;
+  customer: string;
+  from: string;
+  to: string;
+  cargo: string;
+  weightT: number;
+  channel: 'email' | 'phone' | 'whatsapp' | 'portal';
+  receivedAt: string;
+  note?: string;
+  status: InquiryStatus;
+  quoteId?: string;
+}
+
 export interface Quote {
   id: string;
   tenantId: string;
@@ -263,6 +280,15 @@ export interface Tenant {
 }
 
 export type AutonomyLevel = 'Manual' | 'Suggest' | 'Approve' | 'Autonomous';
+
+/** permission capabilities checked via store.can() */
+export type Capability =
+  | 'approve'      // approve/reject governance actions
+  | 'assign'       // dispatch: assign vehicles & drivers
+  | 'bid'          // exchange: bid on loads, post capacity
+  | 'settle'       // finance: record payments, settle movements
+  | 'admin'        // settings: users, security, flags, data
+  | 'audit.undo';  // undo reversible ledger entries
 
 export interface Toast {
   id: string;
