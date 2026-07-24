@@ -40,6 +40,8 @@ export default function AssignBoard({
   const tenantId = useStore((s) => s.activeTenantId);
   const movements = useStore((s) => s.movements.filter((m) => m.tenantId === s.activeTenantId));
   const assignDriver = useStore((s) => s.assignDriver);
+  const canAssign = useStore((s) => s.can('assign'));
+  const startTrip = useStore((s) => s.startTrip);
   const checkPolicy = useStore((s) => s.checkPolicy);
   const pushToast = useStore((s) => s.pushToast);
 
@@ -205,12 +207,20 @@ export default function AssignBoard({
                 <ShieldCheck className="h-3.5 w-3.5" />
                 Fuel advance {fmtMoney(fuelAdvance)} — {advanceCheck.verdict === 'auto' ? 'inside guardrail → auto-approved, logged' : advanceCheck.reason}
               </MatItem>
-              <MatItem className="mt-3 flex gap-2">
+              <MatItem className="mt-3 flex flex-wrap gap-2">
                 <button
                   onClick={onOpenManifest}
                   className="rounded-chip bg-ember px-3 py-1.5 text-small font-medium text-canvas transition-colors hover:bg-ember-hi"
                 >
                   Open driver manifest
+                </button>
+                <button
+                  onClick={() => { startTrip(assigned.movementId); setAssigned(null); }}
+                  disabled={!canAssign}
+                  title={canAssign ? `Depart ${assignedMovement.from} now` : 'Departures need an Owner or Dispatcher sign-in'}
+                  className="rounded-chip border border-teal/40 bg-teal-dim px-3 py-1.5 text-small font-medium text-teal transition-colors hover:bg-teal/20 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Start trip →
                 </button>
                 <button
                   onClick={() => setAssigned(null)}
@@ -337,13 +347,16 @@ export default function AssignBoard({
                               </motion.div>
                             ))}
                           </div>
-                          <div className="mt-3 flex gap-2">
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
                             <button
                               onClick={confirmAssign}
-                              className="rounded-chip bg-ember px-3 py-1.5 text-small font-medium text-canvas transition-colors hover:bg-ember-hi"
+                              disabled={!canAssign}
+                              title={canAssign ? undefined : 'Assignment needs an Owner or Dispatcher sign-in'}
+                              className="rounded-chip bg-ember px-3 py-1.5 text-small font-medium text-canvas transition-colors hover:bg-ember-hi disabled:cursor-not-allowed disabled:opacity-40"
                             >
                               Confirm assignment
                             </button>
+                            {!canAssign && <span className="text-caption text-text-3">Owner / Dispatcher only</span>}
                             <button onClick={() => setVerdict(null)} className="rounded-chip border border-line-strong px-3 py-1.5 text-small text-text-2 hover:text-text-1">
                               Cancel
                             </button>
